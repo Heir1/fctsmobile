@@ -244,3 +244,250 @@ here is the json format response :
 * Ensure smooth navigation with **React Navigation**
 
 ---
+
+
+## Segond part
+
+
+In my **React Native + Tailwind (NativeWind)** project, I want you to build a professional header, sidebar, and CRUD flow for managing "children". Please follow these detailed steps:
+
+---
+
+### 1. Header with Breadcrumb
+- Add a breadcrumb icon (menu icon ☰) at the far left of the header.
+- When pressed, it should open a sidebar sliding in **from the left**.
+- Sidebar should cover **75% of the screen width** with a smooth `ease-in-out` transition.
+- The rest of the screen (25%) should have a **dark semi-transparent overlay**. Clicking/tapping on it closes the sidebar.
+
+---
+
+### 2. Sidebar Component
+- At the top of the sidebar, display the **app logo in /assets/images/logo.png **.
+- Add navigation links:
+  - `Home` → navigates to the **Dashboard** screen.
+  - `Children` → navigates to a new **Children CRUD** screen.
+- Style: modern Tailwind UI with `rounded-2xl`, `shadow-md`, padding, and hover/active effects.
+
+---
+
+
+### 3. Children CRUD Screen
+
+I want the Children page implemented in **four steps** (one for each CRUD operation), with the proper **Supabase Edge Function endpoints**:
+
+#### 3.1. **Read (GET all + GET by ID)**
+- Display a **list of all children** in a scrollable view.
+- Use endpoint:  
+  - `GET all`: https://gbcvxntommivvndxqemz.supabase.co/functions/v1/children with response : 
+   {
+    "success": true,
+    "data": {
+        "children": [
+            {
+                "id": "7a875e9e-5eaa-4089-a11f-58b417aa9027",
+                "orphanage_id": "a1210e88-384f-406e-8531-17c68498eec8",
+                "full_name": "David Tshibola",
+                "gender": "M",
+                "birth_date": "2014-03-09",
+                "estimated_age": 11,
+                "entry_date": "2025-08-09",
+                "photo_url": null,
+                "parent_status": "partial_orphan",
+                "internal_code": "CH-2025-002",
+                "dhis2_tracked_entity_id": null,
+                "created_at": "2025-08-09T14:04:45.543739+00:00",
+                "updated_at": "2025-08-09T14:06:28.088482+00:00",
+                "orphanage": {
+                    "name": "Maison Lumière"
+                }
+            },
+            {
+                "id": "01451a68-437d-4e7b-affd-3e7ce8e8856d",
+                "orphanage_id": "a1210e88-384f-406e-8531-17c68498eec8",
+                "full_name": "Grace Mbayo",
+                "gender": "F",
+                "birth_date": "2017-06-15",
+                "estimated_age": 8,
+                "entry_date": "2025-07-12",
+                "photo_url": null,
+                "parent_status": "partial_orphan",
+                "internal_code": "CH-2025-001",
+                "dhis2_tracked_entity_id": null,
+                "created_at": "2025-07-12T17:44:48.215967+00:00",
+                "updated_at": "2025-08-08T15:17:32.61318+00:00",
+                "orphanage": {
+                    "name": "Maison Lumière"
+                }
+            }
+        ],
+        "metrics": {
+            "total_count": 2,
+            "current_page": 1,
+            "total_pages": 1,
+            "has_next_page": false,
+            "has_prev_page": false,
+            "page_size": 10
+        },
+        "filters": {
+            "search": null,
+            "gender": null,
+            "parent_status": null
+        }
+    }
+   }  
+  - `GET by id`: https://gbcvxntommivvndxqemz.supabase.co/functions/v1/child/{id}  with response :
+{
+    "id": "01451a68-437d-4e7b-affd-3e7ce8e8856d",
+    "orphanage_id": "a1210e88-384f-406e-8531-17c68498eec8",
+    "full_name": "Grace Mbayo",
+    "gender": "F",
+    "birth_date": "2017-06-15",
+    "estimated_age": 8,
+    "entry_date": "2025-07-12",
+    "photo_url": null,
+    "parent_status": "partial_orphan",
+    "internal_code": "CH-2025-001",
+    "dhis2_tracked_entity_id": null,
+    "created_at": "2025-07-12T17:44:48.215967+00:00",
+    "updated_at": "2025-08-08T15:17:32.61318+00:00",
+    "nutrition_records": [
+        {
+            "id": "f6ea1944-4c3c-4321-a85c-8a2c30367c8e",
+            "bmi": 9.5,
+            "date": "2025-07-12",
+            "synced": false,
+            "child_id": "01451a68-437d-4e7b-affd-3e7ce8e8856d",
+            "height_cm": 110,
+            "weight_kg": 11.5,
+            "created_at": "2025-07-12T17:48:57.061794+00:00",
+            "updated_at": "2025-08-25T18:42:01.454939+00:00",
+            "dhis2_event_id": null,
+            "nutrition_status": "malnourished"
+        }
+    ],
+    "health_records": [
+        {
+            "id": "2ad54764-3f7e-4253-98d2-c15ceaad57aa",
+            "date": "2025-07-12",
+            "synced": false,
+            "remarks": "Suivi nutritionnel conseillé",
+            "child_id": "01451a68-437d-4e7b-affd-3e7ce8e8856d",
+            "created_at": "2025-07-12T17:47:07.018148+00:00",
+            "updated_at": "2025-07-12T17:47:07.018148+00:00",
+            "medications": "Complément nutritionnel, crème dermatologique",
+            "dhis2_event_id": null,
+            "chronic_conditions": "Aucune",
+            "vaccination_status": "DTC-HepB-Hib reçu à 2 mois, Rougeole manquante",
+            "vaccination_status_structured": {
+                "status": "partially_vaccinated",
+                "vaccines": [],
+                "last_updated": "2025-07-12T17:45:50.699Z"
+            }
+        }
+    ],
+    "child_diseases": [
+        {
+            "notes": null,
+            "diseases": {
+                "name": "Malnutrition"
+            },
+            "severity": "severe",
+            "diagnosed_date": "2025-07-12"
+        },
+        {
+            "notes": null,
+            "diseases": {
+                "name": "Dermatite"
+            },
+            "severity": "moderate",
+            "diagnosed_date": "2025-07-12"
+        }
+    ]
+}
+
+- Show children in a styled `FlatList` with name, age, and actions (`Edit`, `Delete`).
+
+#### 3.2. **Create (POST)**
+- Add a **floating action button** (`+`) at bottom-right.
+- When tapped, open a **modal form** (name, age, etc.).
+- On submit, call endpoint:  
+  - `POST create`: https://gbcvxntommivvndxqemz.supabase.co/functions/v1/children-create 
+  body json : {
+   "full_name": "Jeanne Dupont",
+   "gender": "F",
+   "birth_date": "2018-05-15",
+   "estimated_age": 6,
+   "entry_date": "2024-01-15",
+   "parent_status": "abandoned",
+   "internal_code": "JD-2024-003" // optional
+}
+
+response json : 
+{
+    "success": true,
+    "message": "Enfant ajouté avec succès",
+    "data": {
+        "id": "b2e48fc5-3847-4f27-b448-067ff4c09254",
+        "orphanage_id": "a1210e88-384f-406e-8531-17c68498eec8",
+        "full_name": "Jeanne Dupont",
+        "gender": "F",
+        "birth_date": "2018-05-15",
+        "estimated_age": 6,
+        "entry_date": "2024-01-15",
+        "photo_url": null,
+        "parent_status": "abandoned",
+        "internal_code": "JD-2024-003",
+        "dhis2_tracked_entity_id": null,
+        "created_at": "2025-09-02T14:24:31.926372+00:00",
+        "updated_at": "2025-09-02T14:24:31.926372+00:00"
+    }
+}
+
+- After success, close modal and refresh list.
+
+#### 3.3. **Update (PUT)**
+- Each child item should have an `Edit` button.
+- When tapped, open a pre-filled modal with child info.
+- On save, call endpoint:  
+  - `PUT update`: https://gbcvxntommivvndxqemz.supabase.co/functions/v1/update-child/{id}  
+- Show success/failure toasts and refresh list.
+
+  body json : {
+   "full_name": "Jeanne Dupont",
+   "gender": "F",
+   "birth_date": "2018-05-15",
+   "estimated_age": 6,
+   "entry_date": "2024-01-15",
+   "parent_status": "abandoned",
+   "internal_code": "JD-2024-003" // optional
+}
+
+response json : 
+{
+    "success": true,
+    "message": "Enfant ajouté avec succès",
+    "data": {
+        "id": "b2e48fc5-3847-4f27-b448-067ff4c09254",
+        "orphanage_id": "a1210e88-384f-406e-8531-17c68498eec8",
+        "full_name": "Jeanne Dupont",
+        "gender": "F",
+        "birth_date": "2018-05-15",
+        "estimated_age": 6,
+        "entry_date": "2024-01-15",
+        "photo_url": null,
+        "parent_status": "abandoned",
+        "internal_code": "JD-2024-003",
+        "dhis2_tracked_entity_id": null,
+        "created_at": "2025-09-02T14:24:31.926372+00:00",
+        "updated_at": "2025-09-02T14:24:31.926372+00:00"
+    }
+}
+
+#### 3.4. **Delete (DELETE)**
+- Each child item should also have a `Delete` button.
+- When tapped, show a confirmation dialog (`Are you sure you want to delete this child?`).
+- If confirmed, call endpoint:  
+  - `DELETE`: https://gbcvxntommivvndxqemz.supabase.co/functions/v1/delete-child/{id}  
+- Refresh list after deletion.
+
+---

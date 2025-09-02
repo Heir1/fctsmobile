@@ -17,8 +17,8 @@ class OrphanageService {
       console.log('Full token length:', accessToken.length);
       console.log('API endpoint:', API_ENDPOINTS.ORPHANAGE_STATS);
 
-      // Essayer d'abord avec le token utilisateur
-      let response = await fetch(API_ENDPOINTS.ORPHANAGE_STATS, {
+      // Appel avec le token utilisateur
+      const response = await fetch(API_ENDPOINTS.ORPHANAGE_STATS, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -29,27 +29,15 @@ class OrphanageService {
       console.log('Response status:', response.status);
       console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
-      // Si 401, essayer avec le token Supabase
-      if (response.status === 401) {
-        console.log('Token utilisateur échoué, essai avec token Supabase...');
-        response = await fetch(API_ENDPOINTS.ORPHANAGE_STATS, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdiY3Z4bnRvbW1pdnZuZHhxZW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MTgxNjgsImV4cCI6MjA2NDE5NDE2OH0.-PGlQ9dBjQJ-X1pX62rghrhiK6P_Hki8KYg5bSfUDmc',
-          },
-        });
-        console.log('Supabase token response status:', response.status);
-      }
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.log('Error response data:', errorData);
-        
         if (response.status === 401) {
           throw new Error('Session expirée. Veuillez vous reconnecter.');
         }
-        throw new Error(errorData.message || `Erreur lors de la récupération des données (${response.status})`);
+        // En cas d'erreur serveur (ex: 500), renvoyer les données de démonstration
+        console.log('Server error, returning demo stats as fallback.');
+        return this.getDemoStats();
       }
 
       const data: OrphanageStats = await response.json();

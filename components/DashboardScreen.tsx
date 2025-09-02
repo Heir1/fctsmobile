@@ -1,26 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Animated,
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
 import { orphanageService } from '../services/orphanageService';
 import { OrphanageStats } from '../types/orphanage';
+import Sidebar from './Sidebar';
 import DashboardStats from './stats/DashboardStats';
 
 export default function DashboardScreen() {
   const { user, logout } = useAuth();
+  const router = useRouter();
   const [stats, setStats] = useState<OrphanageStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarAnim = useRef(new Animated.Value(0)).current; // 0 closed, 1 open
+  const sidebarWidth = Dimensions.get('window').width * 0.75;
 
   const loadStats = async (useDemoData = false) => {
     try {
@@ -76,6 +84,33 @@ export default function DashboardScreen() {
     );
   };
 
+  const openSidebar = () => {
+    setIsSidebarOpen(true);
+    Animated.timing(sidebarAnim, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeSidebar = () => {
+    Animated.timing(sidebarAnim, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => setIsSidebarOpen(false));
+  };
+
+  const navigateHome = () => {
+    closeSidebar();
+    router.replace('/dashboard');
+  };
+
+  const navigateChildren = () => {
+    closeSidebar();
+    router.push('/children');
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -87,12 +122,6 @@ export default function DashboardScreen() {
                 Welcome back, {user?.email || 'User'}
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={handleLogout}
-              style={styles.logoutButton}
-            >
-              <Text style={styles.logoutButtonText}>Logout</Text>
-            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.loadingContainer}>
@@ -108,18 +137,16 @@ export default function DashboardScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
+          <TouchableOpacity onPress={openSidebar} style={styles.menuButton}>
+            <Text style={styles.menuIcon}>☰</Text>
+          </TouchableOpacity>
           <View>
             <Text style={styles.headerTitle}>Dashboard</Text>
             <Text style={styles.headerSubtitle}>
               Welcome back, {user?.email || 'User'}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={handleLogout}
-            style={styles.logoutButton}
-          >
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </TouchableOpacity>
+
         </View>
       </View>
 
@@ -158,6 +185,30 @@ export default function DashboardScreen() {
         </View> */}
 
       </ScrollView>
+
+      {/* Sidebar + Overlay */}
+      {isSidebarOpen && (
+        <View style={styles.overlayContainer}>
+          <Animated.View
+            style={[
+              styles.sidebarContainer,
+              {
+                transform: [
+                  {
+                    translateX: sidebarAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [-sidebarWidth, 0],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
+            <Sidebar onNavigateHome={navigateHome} onNavigateChildren={navigateChildren} onClose={closeSidebar} onLogout={handleLogout} />
+          </Animated.View>
+          <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={closeSidebar} />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -184,6 +235,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  menuButton: {
+    marginRight: 12,
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+  },
+  menuIcon: {
+    fontSize: 18,
+    color: '#111827',
+    fontWeight: '700',
+  },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -204,6 +266,26 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  overlayContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+  },
+  overlay: {
+    width: '25%',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  sidebarContainer: {
+    width: '75%',
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   loadingContainer: {
     flex: 1,
