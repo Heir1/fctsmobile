@@ -111,6 +111,11 @@ export default function DashboardScreen() {
     router.push('/children');
   };
 
+  const navigateHealth = () => {
+    closeSidebar();
+    router.push('/health');
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -204,7 +209,7 @@ export default function DashboardScreen() {
               },
             ]}
           >
-            <Sidebar onNavigateHome={navigateHome} onNavigateChildren={navigateChildren} onClose={closeSidebar} onLogout={handleLogout} />
+            <Sidebar onNavigateHome={navigateHome} onNavigateChildren={navigateChildren} onNavigateHealth={navigateHealth} onClose={closeSidebar} onLogout={handleLogout} />
           </Animated.View>
           <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={closeSidebar} />
         </View>

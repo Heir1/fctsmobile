@@ -4,11 +4,12 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 export type SidebarProps = {
   onNavigateHome: () => void;
   onNavigateChildren: () => void;
+  onNavigateHealth: () => void;
   onClose: () => void;
   onLogout?: () => void;
 };
 
-export default function Sidebar({ onNavigateHome, onNavigateChildren, onLogout }: SidebarProps) {
+export default function Sidebar({ onNavigateHome, onNavigateChildren, onNavigateHealth, onLogout }: SidebarProps) {
   return (
     <View style={{ flex: 1, backgroundColor: 'white', paddingHorizontal: 16, paddingVertical: 24 }}>
       <View style={{ alignItems: 'center', marginBottom: 24 }}>
@@ -34,6 +35,14 @@ export default function Sidebar({ onNavigateHome, onNavigateChildren, onLogout }
         >
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827' }}>Children</Text>
           <Text style={{ fontSize: 12, color: '#6b7280' }}>Manage children records</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={onNavigateHealth}
+          style={{ backgroundColor: '#f3f4f6', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 16 }}
+        >
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827' }}>Health</Text>
+          <Text style={{ fontSize: 12, color: '#6b7280' }}>Manage health records</Text>
         </TouchableOpacity>
 
         {onLogout && (
