@@ -18,10 +18,10 @@
 
 ```
 POST https://gbcvxntommivvndxqemz.supabase.co/functions/v1/login
-Body JSON:
+Body JSON example:
 {
-  "email": "lumiere@centre.cd",
-  "password": ".wus6d66x75p"
+  "email": "test@centre.cd",
+  "password": "test"
 }
 ```
 
