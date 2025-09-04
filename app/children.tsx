@@ -86,7 +86,7 @@ export default function ChildrenScreen() {
         <Text style={styles.childMeta}>Orphelinat: {item.orphanage?.name ?? '—'}</Text>
       </View>
       <View style={styles.actionsRow}>
-        <TouchableOpacity style={styles.actionButton} onPress={() => router.push(`/children/${item.id}`)}>
+        <TouchableOpacity style={styles.actionButton} onPress={() => router.push({ pathname: '/children/[id]', params: { id: item.id } })}>
           <Text style={styles.actionText}>View</Text>
         </TouchableOpacity>
         <TouchableOpacity 
