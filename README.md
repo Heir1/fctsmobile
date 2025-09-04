@@ -1024,3 +1024,177 @@ response json "{
 
 * **Delete health record**
   `DELETE https://gbcvxntommivvndxqemz.supabase.co/functions/v1/delete-health-record/{record_id}`
+
+
+
+  create nutrition
+
+
+### 5. Nutrition records CRUD Screen 
+
+In our React Native + Tailwind (NativeWind) project, extend the sidebar navigation by adding a new link called **"Nutrition"**.  
+
+### Functional Goal
+We want to implement full **CRUD operations** for children's nutrition records. The app already has the "Get children" API integrated, so leverage that to first **select a child** and then manage their health records (create, view, delete). Each child can have multiple nutrition records.
+
+### Sidebar
+- Add a new "Nutrition" link in the sidebar.
+- When selected, it should navigate to a screen where we can:
+  1. Choose a child (list fetched from `GET /children`)
+  2. Once a child is selected → display their nutrition records.
+  3. Allow adding, viewing details, and deleting nutrition records.
+
+### API Endpoints
+- **Get children**  
+  `GET https://gbcvxntommivvndxqemz.supabase.co/functions/v1/children` : 
+
+    {
+        "success": true,
+        "data": {
+            "children": [
+                {
+                    "id": "7a875e9e-5eaa-4089-a11f-58b417aa9027",
+                    "orphanage_id": "a1210e88-384f-406e-8531-17c68498eec8",
+                    "full_name": "David Tshibola",
+                    "gender": "M",
+                    "birth_date": "2014-03-09",
+                    "estimated_age": 11,
+                    "entry_date": "2025-08-09",
+                    "photo_url": null,
+                    "parent_status": "partial_orphan",
+                    "internal_code": "CH-2025-002",
+                    "dhis2_tracked_entity_id": null,
+                    "created_at": "2025-08-09T14:04:45.543739+00:00",
+                    "updated_at": "2025-08-09T14:06:28.088482+00:00",
+                    "orphanage": {
+                        "name": "Maison Lumière"
+                    }
+                },
+                {
+                    "id": "01451a68-437d-4e7b-affd-3e7ce8e8856d",
+                    "orphanage_id": "a1210e88-384f-406e-8531-17c68498eec8",
+                    "full_name": "Grace Mbayo",
+                    "gender": "F",
+                    "birth_date": "2017-06-15",
+                    "estimated_age": 8,
+                    "entry_date": "2025-07-12",
+                    "photo_url": null,
+                    "parent_status": "partial_orphan",
+                    "internal_code": "CH-2025-001",
+                    "dhis2_tracked_entity_id": null,
+                    "created_at": "2025-07-12T17:44:48.215967+00:00",
+                    "updated_at": "2025-08-08T15:17:32.61318+00:00",
+                    "orphanage": {
+                        "name": "Maison Lumière"
+                    }
+                }
+            ],
+            "metrics": {
+                "total_count": 2,
+                "current_page": 1,
+                "total_pages": 1,
+                "has_next_page": false,
+                "has_prev_page": false,
+                "page_size": 10
+            },
+            "filters": {
+                "search": null,
+                "gender": null,
+                "parent_status": null
+            }
+        }
+   }
+
+- **Get nutrition records of a child**
+  
+  `GET https://gbcvxntommivvndxqemz.supabase.co/functions/v1/nutrition-records/{child_id}` : 
+
+{
+    "success": true,
+    "data": {
+        "records": [
+            {
+                "id": "3794a8c1-fa4e-4a7d-aec8-9aadf38deaf1",
+                "child_id": "57c2e86c-6d60-470f-bc18-b78ca5c85e9d",
+                "date": "2025-09-04",
+                "weight_kg": 70,
+                "height_cm": 160,
+                "bmi": 27.34,
+                "nutrition_status": "normal",
+                "dhis2_event_id": null,
+                "synced": false,
+                "created_at": "2025-09-04T13:31:50.962154+00:00",
+                "updated_at": "2025-09-04T13:31:50.962154+00:00",
+                "child": {
+                    "full_name": "Sephora Tshiyombo",
+                    "birth_date": "2020-09-01"
+                }
+            }
+        ],
+        "metrics": {
+            "total_count": 1,
+            "current_page": 1,
+            "total_pages": 1,
+            "has_next_page": false,
+            "has_prev_page": false,
+            "page_size": 10
+        },
+        "child": {
+            "id": "57c2e86c-6d60-470f-bc18-b78ca5c85e9d",
+            "full_name": "Sephora Tshiyombo"
+        }
+    }
+}
+
+- **Create nutrition record for a child**  
+  `POST https://gbcvxntommivvndxqemz.supabase.co/functions/v1/create-nutrition-record/{child_id}`  
+  JSON body example:  
+
+  ```
+{
+  "date": "2024-01-15T10:30:00.000Z",
+  "weight_kg": 25.5,
+  "height_cm": 120.5,
+  "nutrition_status": "normal"
+}
+
+````
+
+* **Get health record details**
+  `GET https://gbcvxntommivvndxqemz.supabase.co/functions/v1/nutrition-record/{record_id}`
+
+response json "{
+    "success": true,
+    "data": {
+        "id": "3794a8c1-fa4e-4a7d-aec8-9aadf38deaf1",
+        "child_id": "57c2e86c-6d60-470f-bc18-b78ca5c85e9d",
+        "date": "2025-09-04",
+        "weight_kg": 70,
+        "height_cm": 160,
+        "bmi": 27.34,
+        "nutrition_status": "normal",
+        "dhis2_event_id": null,
+        "synced": false,
+        "created_at": "2025-09-04T13:31:50.962154+00:00",
+        "updated_at": "2025-09-04T13:31:50.962154+00:00",
+        "child": {
+            "id": "57c2e86c-6d60-470f-bc18-b78ca5c85e9d",
+            "full_name": "Sephora Tshiyombo",
+            "birth_date": "2020-09-01",
+            "orphanage_id": "a1210e88-384f-406e-8531-17c68498eec8"
+        },
+        "bmi_interpretation": "Surpoids"
+    }
+}"
+
+* **Update health record details**
+  `PUT https://gbcvxntommivvndxqemz.supabase.co/functions/v1/update-nutrition-record/{record_id}`
+
+  json body : {
+    "weight_kg": 26.8,
+    "height_cm": 121.2,
+    "nutrition_status": "normal"
+  }
+
+* **Delete health record**
+  `DELETE https://gbcvxntommivvndxqemz.supabase.co/functions/v1/delete-nutrition-record/{record_id}`

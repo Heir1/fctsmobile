@@ -1,28 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { DatePickerInput, registerTranslation } from 'react-native-paper-dates';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, Alert, FlatList, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { DatePickerInput } from 'react-native-paper-dates';
 import { childrenService } from '../services/childrenService';
 import { healthService } from '../services/healthService';
 import { ChildSummary } from '../types/child';
 
-registerTranslation('fr', {
-  save: 'Sauvegarder',
-  selectSingle: 'Sélectionner date',
-  selectMultiple: 'Sélectionner dates',
-  selectRange: 'Sélectionner période',
-  notAccordingToDateFormat: (inputFormat) => `Format invalide`,
-  mustBeHigherThan: (date) => `Doit être après la date`,
-  mustBeLowerThan: (date) => `Doit être avant la date`,
-  mustBeBetween: (startDate, endDate) => `Doit être entre les dates`,
-  dateIsDisabled: (date) => `Date désactivée`,
-  previous: 'Précédent',
-  next: 'Suivant',
-  typeInDate: 'Saisir la date',
-  inputHelpText: 'Format: JJ/MM/AAAA',
-});
+// Locale registration moved to app/_layout.tsx
 
 export default function HealthScreen() {
+  
   const [children, setChildren] = useState<ChildSummary[]>([]);
   const [loadingChildren, setLoadingChildren] = useState(true);
   const [childrenError, setChildrenError] = useState<string | null>(null);
