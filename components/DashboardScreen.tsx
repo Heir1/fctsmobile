@@ -116,6 +116,11 @@ export default function DashboardScreen() {
     router.push('/health');
   };
 
+  const navigateNutrition = () => {
+    closeSidebar();
+    router.push('/nutrition');
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -209,7 +214,7 @@ export default function DashboardScreen() {
               },
             ]}
           >
-            <Sidebar onNavigateHome={navigateHome} onNavigateChildren={navigateChildren} onNavigateHealth={navigateHealth} onClose={closeSidebar} onLogout={handleLogout} />
+            <Sidebar onNavigateHome={navigateHome} onNavigateChildren={navigateChildren} onNavigateHealth={navigateHealth} onNavigateNutrition={navigateNutrition} onClose={closeSidebar} onLogout={handleLogout} />
           </Animated.View>
           <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={closeSidebar} />
         </View>

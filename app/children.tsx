@@ -181,6 +181,7 @@ export default function ChildrenScreen() {
                   value={birthDate}
                   onChange={(d) => setBirthDate(d ?? undefined)}
                   inputMode="start"
+                  locale="fr"
                   withModal
                 />
               </View>
@@ -199,6 +200,7 @@ export default function ChildrenScreen() {
                   value={entryDate}
                   onChange={(d) => setEntryDate(d ?? undefined)}
                   inputMode="start"
+                  locale="fr"
                   withModal
                 />
               </View>
@@ -292,6 +294,7 @@ export default function ChildrenScreen() {
                   value={editBirthDate}
                   onChange={(d) => setEditBirthDate(d ?? undefined)}
                   inputMode="start"
+                  locale="fr"
                   withModal
                 />
               </View>
@@ -310,6 +313,7 @@ export default function ChildrenScreen() {
                   value={editEntryDate}
                   onChange={(d) => setEditEntryDate(d ?? undefined)}
                   inputMode="start"
+                  locale="fr"
                   withModal
                 />
               </View>
