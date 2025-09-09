@@ -56,7 +56,6 @@ function AppContent() {
           <Stack.Screen name="dashboard" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
-        <StatusBar style="auto" />
       </PaperProvider>
     </ThemeProvider>
   );
@@ -65,6 +64,7 @@ function AppContent() {
 export default function RootLayout() {
   return (
     <AuthProvider>
+      <StatusBar style="light" backgroundColor="#000000" translucent={false} />
       <AppContent />
     </AuthProvider>
   );

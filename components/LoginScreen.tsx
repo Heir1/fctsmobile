@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
@@ -70,61 +70,21 @@ export default function LoginScreen() {
           {/* Header */}
           <View style={styles.headerContainer}>
             <View style={styles.logoContainer}>
-              <View style={styles.logoCircle}>
-                <Text style={styles.logoText}>🏠</Text>
-              </View>
-              <Text style={styles.title}>Orphanage Care</Text>
-              <Text style={styles.subtitle}>
-                Manage and monitor orphanage statistics with care and compassion
-              </Text>
-            </View>
 
-            {/* Tab Navigation */}
-            <View style={styles.tabContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.tabButton,
-                  activeTab === 'login' && styles.activeTabButton
-                ]}
-                onPress={() => setActiveTab('login')}
-              >
-                <Text style={[
-                  styles.tabText,
-                  activeTab === 'login' && styles.activeTabText
-                ]}>
-                  Login
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.tabButton,
-                  activeTab === 'register' && styles.activeTabButton
-                ]}
-                onPress={() => {
-                  setActiveTab('register');
-                  handleRegisterPress();
-                }}
-              >
-                <Text style={[
-                  styles.tabText,
-                  activeTab === 'register' && styles.activeTabText
-                ]}>
-                  Register
-                </Text>
-              </TouchableOpacity>
+              <Text style={styles.title}>Sign In</Text>
+
             </View>
 
             {/* Login Form */}
             <View style={styles.formContainer}>
-              <Text style={styles.formTitle}>Welcome Back</Text>
 
               {/* Email Input */}
               <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Email</Text>
+                <Text style={styles.inputLabel}>Email Address</Text>
                 <TextInput
                   style={styles.textInput}
                   placeholder="Enter your email"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor="#7D8A95"
                   value={credentials.email}
                   onChangeText={(text) => setCredentials({ ...credentials, email: text })}
                   keyboardType="email-address"
@@ -167,21 +127,20 @@ export default function LoginScreen() {
                 )}
               </TouchableOpacity>
 
-              {/* Demo Credentials */}
-              <View style={styles.demoContainer}>
-                <Text style={styles.demoTitle}>Demo Credentials:</Text>
-                <Text style={styles.demoText}>Email: lumiere@centre.cd</Text>
-                <Text style={styles.demoText}>Password: .wus6d66x75p</Text>
+              <View style={styles.registerContainer}>
+                <Text style={styles.register}>Don't have an account ? </Text>
+                <TouchableOpacity  onPress={() => {
+                  setActiveTab('register');
+                  handleRegisterPress();
+                }}>
+                  <Text style={styles.createAccount}>Create Account</Text>
+                </TouchableOpacity>
               </View>
+
             </View>
+
           </View>
 
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              © 2024 Orphanage Care Management System
-            </Text>
-          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -191,7 +150,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f9ff',
+    backgroundColor: '#232528',
   },
   keyboardView: {
     flex: 1,
@@ -205,7 +164,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flex: 1,
-    justifyContent: 'center',
+    paddingTop: '30%',
   },
   logoContainer: {
     alignItems: 'center',
@@ -214,7 +173,7 @@ const styles = StyleSheet.create({
   logoCircle: {
     width: 80,
     height: 80,
-    backgroundColor: '#0ea5e9',
+    // backgroundColor: '#0ea5e9',
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
@@ -226,9 +185,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: '#F1F4F6',
     marginBottom: 8,
   },
   subtitle: {
@@ -265,14 +224,9 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   formContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#232528',
     borderRadius: 12,
-    padding: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    padding: 12,
   },
   formTitle: {
     fontSize: 24,
@@ -285,29 +239,28 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   inputLabel: {
-    color: '#374151',
+    color: '#F1F4F6',
     fontWeight: '500',
     marginBottom: 8,
   },
   textInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
+    borderRadius: 14,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 16,
     color: '#1f2937',
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#2B3037',
   },
   loginButton: {
-    backgroundColor: '#0ea5e9',
-    borderRadius: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    backgroundColor: '#2E6FF3',
+    borderRadius: 32,
+    paddingVertical: 14,
+    paddingHorizontal: 22,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    marginTop: 20
   },
   disabledButton: {
     backgroundColor: '#9ca3af',
@@ -335,6 +288,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#93c5fd',
+  },
+  registerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 28,
+  },
+  register: {
+    color: '#B2BCC9',
+    fontSize: 13,
+  },
+  createAccount: {
+    color: '#F1F4F6',
+    fontWeight: 'bold',
+    fontSize: 13,
+  },
+  // Pour l'effet au press
+  createAccountPressed: {
+    color: '#0056B3',
+    opacity: 0.8,
   },
   demoTitle: {
     color: '#1e40af',
