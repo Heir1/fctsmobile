@@ -152,9 +152,6 @@ export default function DashboardScreen() {
           </TouchableOpacity>
           <View>
             <Text style={styles.headerTitle}>Dashboard</Text>
-            <Text style={styles.headerSubtitle}>
-              Welcome back, {user?.email || 'User'}
-            </Text>
           </View>
 
         </View>
@@ -177,22 +174,6 @@ export default function DashboardScreen() {
         )}
 
         {stats && <DashboardStats stats={stats} />}
-
-        {/* <View style={styles.successCard}>
-          <Text style={styles.successTitle}>
-            Étape 3 Complete! ✅
-          </Text>
-          <Text style={styles.successText}>
-            Dashboard optimisé avec statistiques focalisées :
-          </Text>
-          <View style={styles.successList}>
-            <Text style={styles.successItem}>• Statistiques principales (enfants, occupation, nouveaux)</Text>
-            <Text style={styles.successItem}>• Métriques de santé et bien-être</Text>
-            <Text style={styles.successItem}>• Répartition par genre avec icônes</Text>
-            <Text style={styles.successItem}>• Alertes automatiques pour problèmes critiques</Text>
-            <Text style={styles.successItem}>• Interface épurée et professionnelle</Text>
-          </View>
-        </View> */}
 
       </ScrollView>
 
@@ -226,10 +207,10 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#232528',
   },
   header: {
-    backgroundColor: 'white',
+    backgroundColor: '#232528',
     paddingHorizontal: 24,
     paddingVertical: 16,
     shadowColor: '#000',
@@ -237,29 +218,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
   },
   menuButton: {
     marginRight: 12,
-    padding: 8,
+    paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#232528',
   },
   menuIcon: {
-    fontSize: 18,
-    color: '#111827',
+    fontSize: 24,
+    color: '#ffffff',
     fontWeight: '700',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: '#ffffff',
   },
   headerSubtitle: {
     color: '#6b7280',

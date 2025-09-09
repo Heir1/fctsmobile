@@ -11,14 +11,9 @@ interface Props {
 export default function DashboardStats({ stats }: Props) {
   return (
     <View style={styles.container}>
-      {/* Header avec nom de l'orphelinat */}
-      {/* <View style={styles.header}>
-        <Text style={styles.orphanageName}>{stats.orphanage.name}</Text>
-        <Text style={styles.location}>{stats.orphanage.city}, {stats.orphanage.province}</Text>
-      </View> */}
 
       {/* Statistiques principales - Capacité */}
-      <Text style={styles.sectionTitle}>Capacité</Text>
+      <Text style={styles.sectionTitle}>Capacity</Text>
       <View style={styles.scrollContainer}>
         <ScrollView 
           horizontal 
@@ -30,31 +25,37 @@ export default function DashboardStats({ stats }: Props) {
             <View style={styles.statIconContainer}>
               <Text style={styles.statIcon}>👶</Text>
             </View>
-            <Text style={styles.statNumber}>{stats.children.total}</Text>
-            <Text style={styles.statLabel}>Enfants</Text>
+            <View  style={styles.numAndField}>
+              <Text style={styles.statNumber}>{stats.children.total}</Text>
+              <Text style={styles.statLabel}>Children</Text>
+            </View>
           </View>
           
           <View style={styles.statCard}>
             <View style={styles.statIconContainer}>
               <Text style={styles.statIcon}>🏠</Text>
             </View>
-            <Text style={styles.statNumber}>{stats.capacity.utilizationRate.toFixed(1)}%</Text>
-            <Text style={styles.statLabel}>Occupation</Text>
+            <View  style={styles.numAndField}>
+              <Text style={styles.statNumber}>{stats.capacity.utilizationRate.toFixed(1)}%</Text>
+              <Text style={styles.statLabel}>Occupé(s)</Text>
+            </View>
           </View>
           
           <View style={styles.statCard}>
             <View style={styles.statIconContainer}>
               <Text style={styles.statIcon}>🆕</Text>
             </View>
-            <Text style={styles.statNumber}>{stats.children.newThisMonth}</Text>
-            <Text style={styles.statLabel}>Nouveaux</Text>
+            <View  style={styles.numAndField}>
+              <Text style={styles.statNumber}>{stats.children.newThisMonth}</Text>
+              <Text style={styles.statLabel}>New</Text>
+            </View>
           </View>
         </ScrollView>
       </View>
 
       {/* Métriques de santé */}
       <View style={styles.healthSection}>
-        <Text style={styles.sectionTitle}>Santé & Bien-être</Text>
+        <Text style={styles.sectionTitle}>Health & Wellness</Text>
         <View style={styles.scrollContainer}>
           <ScrollView 
             horizontal 
@@ -66,22 +67,28 @@ export default function DashboardStats({ stats }: Props) {
               <View style={styles.healthIconContainer}>
                 <Text style={styles.healthIcon}>💉</Text>
               </View>
-              <Text style={styles.healthNumber}>{stats.health.vaccinationCoverage}%</Text>
-              <Text style={styles.healthLabel}>Vaccination</Text>
+              <View  style={styles.numAndField}>
+                <Text style={styles.healthNumber}>{stats.health.vaccinationCoverage}%</Text>
+                <Text style={styles.healthLabel}>Vaccination</Text>
+              </View>
             </View>
             <View style={styles.healthMetric}>
               <View style={styles.healthIconContainer}>
                 <Text style={styles.healthIcon}>🥗</Text>
               </View>
-              <Text style={styles.healthNumber}>{stats.nutrition.malnutritionRate}%</Text>
-              <Text style={styles.healthLabel}>Malnutrition</Text>
+              <View  style={styles.numAndField}>
+                <Text style={styles.healthNumber}>{stats.nutrition.malnutritionRate}%</Text>
+                <Text style={styles.healthLabel}>Malnutrition</Text>
+              </View>
             </View>
             <View style={styles.healthMetric}>
               <View style={styles.healthIconContainer}>
                 <Text style={styles.healthIcon}>🏥</Text>
               </View>
-              <Text style={styles.healthNumber}>{stats.health.chronicConditions}</Text>
-              <Text style={styles.healthLabel}>Conditions</Text>
+              <View  style={styles.numAndField}>
+                <Text style={styles.healthNumber}>{stats.health.chronicConditions}</Text>
+                <Text style={styles.healthLabel}>Conditions</Text>
+              </View>
             </View>
           </ScrollView>
         </View>
@@ -89,17 +96,17 @@ export default function DashboardStats({ stats }: Props) {
 
       {/* Répartition par genre */}
       <View style={styles.genderSection}>
-        <Text style={styles.sectionTitle}>Répartition par Genre</Text>
+        <Text style={styles.sectionTitle}>Gender Breakdown</Text>
         <View style={styles.genderStats}>
           <View style={styles.genderItem}>
             <Text style={styles.genderIcon}>👦</Text>
             <Text style={styles.genderNumber}>{stats.children.byGender.boys}</Text>
-            <Text style={styles.genderLabel}>Garçons</Text>
+            <Text style={styles.genderLabel}>Boy(s)</Text>
           </View>
           <View style={styles.genderItem}>
             <Text style={styles.genderIcon}>👧</Text>
             <Text style={styles.genderNumber}>{stats.children.byGender.girls}</Text>
-            <Text style={styles.genderLabel}>Filles</Text>
+            <Text style={styles.genderLabel}>Girl(s)</Text>
           </View>
         </View>
       </View>
@@ -122,7 +129,7 @@ export default function DashboardStats({ stats }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#232528',
     padding: 20,
   },
   header: {
@@ -140,14 +147,13 @@ const styles = StyleSheet.create({
     color: '#6b7280',
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: '#ffffff',
     marginBottom: 16,
-    marginTop: 8,
   },
   scrollContainer: {
-    marginBottom: 24,
+    // marginBottom: 14,
     height: 140,
   },
   scrollContent: {
@@ -159,21 +165,21 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   statCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#2E6FF3',
     borderRadius: 16,
     padding: 16,
-    width: screenWidth * 0.75,
-    height: 120,
+    width: screenWidth * 0.55,
+    height: 100,
     marginRight: 16,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    elevation: 8,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#000',
   },
   statIconContainer: {
     width: 40,
@@ -187,16 +193,22 @@ const styles = StyleSheet.create({
   statIcon: {
     fontSize: 20,
   },
+  numAndField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
   statNumber: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#0ea5e9',
+    color: '#ffffff',
     marginBottom: 4,
+    marginRight: 4
   },
   statLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151',
+    color: '#ffffff',
     textAlign: 'center',
   },
   statSubtext: {
@@ -205,28 +217,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   healthSection: {
-    marginBottom: 24,
+    // marginBottom: 10,
   },
   healthGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   healthMetric: {
-    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#2E6FF3',
     borderRadius: 16,
     padding: 16,
-    width: screenWidth * 0.75,
-    height: 120,
+    width: screenWidth * 0.55,
+    height: 100,
     marginRight: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 8,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#000',
   },
   healthIconContainer: {
     width: 40,
@@ -241,15 +254,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   healthNumber: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#10b981',
+    color: '#ffffff',
     marginBottom: 4,
+    marginRight: 4
   },
   healthLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151',
+    color: '#ffffff',
     textAlign: 'center',
   },
   healthSubtext: {
@@ -261,6 +275,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   genderStats: {
+    paddingVertical: 8,
+    backgroundColor: '#dcfce7',
+    borderRadius: 16,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
