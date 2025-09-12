@@ -204,7 +204,7 @@ export default function HealthScreen() {
             <Text style={styles.sectionTitle}>Select a child</Text>
             {loadingChildren ? (
               <View style={styles.centered}> 
-                <ActivityIndicator size="large" color="#0ea5e9" />
+                <ActivityIndicator size="large" color="#3b82f6" />
               </View>
             ) : childrenError ? (
               <Text style={styles.errorText}>{childrenError}</Text>
@@ -224,7 +224,7 @@ export default function HealthScreen() {
             )}
           </View>
         )}
-
+  
         {selectedChild && (
           <View style={{ flex: 1, width: '100%' }}>
             <View style={styles.childHeader}>
@@ -235,7 +235,7 @@ export default function HealthScreen() {
             </View>
             {loadingRecords ? (
               <View style={styles.centered}>
-                <ActivityIndicator size="large" color="#0ea5e9" />
+                <ActivityIndicator size="large" color="#3b82f6" />
               </View>
             ) : recordsError ? (
               <Text style={styles.errorText}>{recordsError}</Text>
@@ -253,13 +253,13 @@ export default function HealthScreen() {
                     <Text style={styles.recordLine}>Medications: {item.medications || 'N/A'}</Text>
                     <Text style={styles.recordLine}>Remarks: {item.remarks || '—'}</Text>
                     <View style={styles.recordActions}>
-                      <TouchableOpacity onPress={() => openDetail(item.id)} style={styles.actionBtn}>
+                      <TouchableOpacity onPress={() => openDetail(item.id)} style={[styles.actionBtn, styles.viewButton]}>
                         <Text style={styles.actionBtnText}>Details</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => openEditModal(item)} style={styles.actionBtn}>
+                      <TouchableOpacity onPress={() => openEditModal(item)} style={[styles.actionBtn, styles.editButton]}>
                         <Text style={styles.actionBtnText}>Edit</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => confirmDelete(item.id)} style={[styles.actionBtn, styles.deleteBtn]}>
+                      <TouchableOpacity onPress={() => confirmDelete(item.id)} style={[styles.actionBtn, styles.deleteButton]}>
                         <Text style={[styles.actionBtnText, styles.deleteBtnText]}>Delete</Text>
                       </TouchableOpacity>
                     </View>
@@ -270,20 +270,22 @@ export default function HealthScreen() {
           </View>
         )}
       </View>
-
+  
       {selectedChild && (
         <TouchableOpacity style={styles.fab} onPress={openCreateModal}>
           <Text style={styles.fabText}>+</Text>
         </TouchableOpacity>
       )}
-
+  
       {/* Upsert Modal */}
       <Modal visible={isUpsertOpen} transparent animationType="slide" onRequestClose={() => setIsUpsertOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>{editingRecordId ? 'Edit health record' : 'Create health record'}</Text>
+
             <ScrollView contentContainerStyle={{ paddingBottom: 12 }}>
-              <Text style={styles.inputLabel}>Date de consultation</Text>
+
+              {/* <Text style={styles.inputLabel}>Date de consultation</Text>
               <DatePickerInput
                 locale="fr"
                 inputMode="start"
@@ -292,17 +294,31 @@ export default function HealthScreen() {
                 onChange={(d) => setFormDate(d ? d.toISOString().slice(0, 10) : '')}
                 style={styles.input}
                 presentationStyle="pageSheet"
-              />
+              /> */}
 
+              <View style={styles.field}>
+                <Text style={styles.inputLabel}>Date de consultation</Text>
+                <DatePickerInput
+                  locale="fr"
+                  inputMode="start"
+                  withModal
+                  value={formDate ? new Date(formDate) : undefined}
+                  onChange={(d) => setFormDate(d ? d.toISOString().slice(0, 10) : '')}
+                  // style={styles.input}
+                  presentationStyle="pageSheet"
+                />
+              </View>
+  
               <Text style={styles.inputLabel}>Vaccination status</Text>
               <TextInput 
                 value={formVaccinationStatus} 
                 onChangeText={setFormVaccinationStatus} 
                 placeholder="À jour / Partiel / ..." 
-                style={[styles.input, { height: 80 }]} 
+                placeholderTextColor="#6b7280"
+                style={[styles.input]} 
                 multiline 
               />
-
+  
               <Text style={styles.inputLabel}>Statut vaccinal (structuré)</Text>
               <View style={styles.selectRow}>
                 {(['vaccinated','partially_vaccinated','not_vaccinated','unknown'] as const).map((opt) => (
@@ -313,10 +329,10 @@ export default function HealthScreen() {
                   </TouchableOpacity>
                 ))}
               </View>
-
+  
               <Text style={[styles.inputLabel, { marginTop: 12 }]}>Maladies diagnostiquées</Text>
               {loadingDiseases ? (
-                <ActivityIndicator size="small" color="#0ea5e9" />
+                <ActivityIndicator size="small" color="#3b82f6" />
               ) : diseases.length === 0 ? (
                 <View style={styles.diseasesBox}>
                   <Text style={styles.noDiseasesText}>Aucune maladie disponible dans la base de données</Text>
@@ -329,13 +345,13 @@ export default function HealthScreen() {
                     return (
                       <TouchableOpacity key={d.id} style={styles.checkboxRow} onPress={() => toggleSelectedDisease(d.id, !checked)}>
                         <View style={[styles.checkbox, checked && styles.checkboxChecked]} />
-                        <Text>{d.name}</Text>
+                        <Text style={styles.checkboxLabel}>{d.name}</Text>
                       </TouchableOpacity>
                     );
                   })}
                 </View>
               )}
-
+  
               {selectedDiseases.length > 0 && (
                 <View style={{ marginTop: 12 }}>
                   <Text style={styles.inputLabel}>Détails des maladies sélectionnées</Text>
@@ -353,6 +369,7 @@ export default function HealthScreen() {
                         </View>
                         <TextInput
                           placeholder="Notes"
+                          placeholderTextColor="#6b7280"
                           value={sd.notes || ''}
                           onChangeText={(t) => updateSelectedDisease(sd.disease_id, { notes: t })}
                           style={[styles.input, { marginTop: 8 }]}
@@ -362,16 +379,35 @@ export default function HealthScreen() {
                   })}
                 </View>
               )}
-
+  
               <Text style={styles.inputLabel}>Chronic conditions</Text>
-              <TextInput value={formChronic} onChangeText={setFormChronic} placeholder="Asthme léger..." style={styles.input} />
-
+              <TextInput 
+                value={formChronic} 
+                onChangeText={setFormChronic} 
+                placeholder="Asthme léger..." 
+                placeholderTextColor="#6b7280"
+                style={styles.input} 
+              />
+  
               <Text style={styles.inputLabel}>Medications</Text>
-              <TextInput value={formMedications} onChangeText={setFormMedications} placeholder="Ventoline..." style={styles.input} />
-
+              <TextInput 
+                value={formMedications} 
+                onChangeText={setFormMedications} 
+                placeholder="Ventoline..." 
+                placeholderTextColor="#6b7280"
+                style={styles.input} 
+              />
+  
               <Text style={styles.inputLabel}>Remarks</Text>
-              <TextInput value={formRemarks} onChangeText={setFormRemarks} placeholder="Notes..." style={[styles.input, { height: 80 }]} multiline />
-
+              <TextInput 
+                value={formRemarks} 
+                onChangeText={setFormRemarks} 
+                placeholder="Notes..." 
+                placeholderTextColor="#6b7280"
+                style={[styles.input, { height: 80 }]} 
+                multiline 
+              />
+  
               <View style={styles.modalActions}>
                 <TouchableOpacity onPress={() => setIsUpsertOpen(false)} style={[styles.modalBtn, styles.cancelBtn]} disabled={submitting}>
                   <Text style={[styles.modalBtnText, styles.cancelBtnText]}>Cancel</Text>
@@ -384,7 +420,7 @@ export default function HealthScreen() {
           </View>
         </View>
       </Modal>
-
+  
       {/* Detail Modal */}
       <Modal visible={isDetailOpen} transparent animationType="fade" onRequestClose={() => setIsDetailOpen(false)}>
         <View style={styles.modalOverlay}>
@@ -408,7 +444,7 @@ export default function HealthScreen() {
                   )}
                 </View>
               ) : (
-                <ActivityIndicator size="small" color="#0ea5e9" />
+                <ActivityIndicator size="small" color="#3b82f6" />
               )}
             </ScrollView>
             <View style={styles.modalActions}>
@@ -421,76 +457,95 @@ export default function HealthScreen() {
       </Modal>
     </SafeAreaView>
   );
+
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#111827',
   },
   header: {
-    backgroundColor: 'white',
+    backgroundColor: '#1f2937',
     paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: '#374151',
+  },
+  field: {
+    marginBottom: 16
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: '#f9fafb',
+    letterSpacing: 0.5,
   },
   subtitle: {
-    color: '#6b7280',
-    marginTop: 4,
+    color: '#9ca3af',
+    marginTop: 6,
+    fontSize: 14,
   },
   content: {
     flex: 1,
     alignItems: 'stretch',
     justifyContent: 'flex-start',
+    backgroundColor: '#111827',
   },
   placeholder: {
     color: '#6b7280',
+    textAlign: 'center',
+    padding: 20,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1f2937',
-    paddingHorizontal: 16,
-    marginVertical: 12,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#f9fafb',
+    paddingHorizontal: 20,
+    marginVertical: 16,
+    letterSpacing: 0.3,
   },
   childCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: '#1f2937',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#374151',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   childName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
-    marginBottom: 4,
+    color: '#f9fafb',
+    marginBottom: 6,
   },
   childMeta: {
-    color: '#6b7280',
+    color: '#d1d5db',
+    fontSize: 14,
   },
   childMetaSmall: {
     color: '#9ca3af',
-    marginTop: 2,
+    marginTop: 4,
+    fontSize: 12,
   },
   childHeader: {
-    paddingHorizontal: 16,
-    marginTop: 8,
-    marginBottom: 8,
+    paddingHorizontal: 20,
+    marginTop: 12,
+    marginBottom: 12,
   },
   backBtn: {
-    marginTop: 4,
+    marginTop: 8,
+    padding: 8,
   },
   backBtnText: {
-    color: '#2563eb',
+    color: '#3b82f6',
     fontWeight: '600',
+    fontSize: 14,
   },
   centered: {
     flex: 1,
@@ -498,116 +553,143 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   recordCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: '#1f2937',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#374151',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   recordDate: {
     fontWeight: '700',
-    marginBottom: 6,
-    color: '#111827',
+    marginBottom: 8,
+    color: '#f9fafb',
+    fontSize: 16,
   },
   recordLine: {
-    color: '#374151',
-    marginTop: 2,
+    color: '#e5e7eb',
+    marginTop: 4,
+    fontSize: 14,
+    lineHeight: 20,
   },
   recordActions: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 12,
+    marginTop: 16,
+    flexWrap: 'wrap',
   },
   actionBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: '#e5e7eb',
-    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#374151',
+    borderRadius: 12,
+    minWidth: 80,
+    alignItems: 'center',
   },
   actionBtnText: {
-    color: '#111827',
+    color: '#f9fafb',
     fontWeight: '600',
+    fontSize: 12,
   },
-  deleteBtn: {
-    backgroundColor: '#fee2e2',
+  viewButton: {
+    backgroundColor: '#3B82F6',
+  },
+  editButton: {
+    backgroundColor: '#F59E0B',
+  },
+  deleteButton: {
+    backgroundColor: '#EF4444',
   },
   deleteBtnText: {
-    color: '#991b1b',
+    color: '#fecaca',
   },
   fab: {
     position: 'absolute',
-    right: 20,
-    bottom: 30,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#0ea5e9',
+    right: 24,
+    bottom: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#3b82f6',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   fabText: {
     color: 'white',
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 32,
+    fontWeight: '300',
     marginTop: -2,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.7)',
     padding: 20,
     justifyContent: 'center',
   },
   modalCard: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 16,
+    backgroundColor: '#1f2937',
+    borderRadius: 20,
+    padding: 24,
     maxHeight: '85%',
+    borderWidth: 1,
+    borderColor: '#374151',
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '700',
-    color: '#111827',
-    marginBottom: 12,
+    color: '#f9fafb',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   inputLabel: {
     fontWeight: '600',
-    color: '#374151',
-    marginTop: 8,
-    marginBottom: 4,
+    color: '#e5e7eb',
+    marginTop: 16,
+    marginBottom: 8,
+    fontSize: 14,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: '#f9fafb',
+    borderColor: '#374151',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#111827',
+    color: '#f9fafb',
+    fontSize: 14,
   },
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 12,
-    marginTop: 12,
+    marginTop: 20,
   },
   modalBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    minWidth: 100,
+    alignItems: 'center',
   },
   cancelBtn: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#374151',
   },
   cancelBtnText: {
-    color: '#111827',
+    color: '#f9fafb',
+    fontWeight: '600',
   },
   saveBtn: {
-    backgroundColor: '#0ea5e9',
+    backgroundColor: '#3b82f6',
   },
   saveBtnText: {
     color: 'white',
@@ -616,79 +698,91 @@ const styles = StyleSheet.create({
   selectRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 6,
+    gap: 10,
+    marginTop: 8,
   },
   selectPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 9999,
-    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#374151',
+    borderWidth: 1,
+    borderColor: '#4b5563',
   },
   selectPillActive: {
-    backgroundColor: '#dbeafe',
+    backgroundColor: '#1d4ed8',
+    borderColor: '#3b82f6',
   },
   selectPillText: {
-    color: '#374151',
+    color: '#d1d5db',
     fontWeight: '600',
+    fontSize: 12,
   },
   selectPillTextActive: {
-    color: '#1e40af',
+    color: '#ffffff',
   },
   diseasesBox: {
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 10,
-    padding: 12,
-    gap: 8,
-    backgroundColor: '#fff',
+    borderColor: '#374151',
+    borderRadius: 12,
+    padding: 16,
+    gap: 12,
+    backgroundColor: '#111827',
   },
   checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   checkbox: {
-    width: 18,
-    height: 18,
-    borderWidth: 1,
-    borderColor: '#9ca3af',
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: '#6b7280',
     borderRadius: 4,
   },
   checkboxChecked: {
-    backgroundColor: '#0ea5e9',
-    borderColor: '#0ea5e9',
+    backgroundColor: '#3b82f6',
+    borderColor: '#3b82f6',
+  },
+  checkboxLabel: {
+    color: '#e5e7eb',
+    fontSize: 14,
   },
   selectedDiseaseCard: {
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 10,
-    padding: 12,
-    marginTop: 8,
-    backgroundColor: '#fff',
+    borderColor: '#374151',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 12,
+    backgroundColor: '#111827',
   },
   selectedDiseaseTitle: {
     fontWeight: '700',
-    color: '#111827',
-    marginBottom: 6,
+    color: '#f9fafb',
+    marginBottom: 8,
+    fontSize: 15,
   },
   noDiseasesText: {
-    color: '#6b7280',
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  noDiseasesSubtext: {
     color: '#9ca3af',
     textAlign: 'center',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  noDiseasesSubtext: {
+    color: '#6b7280',
+    textAlign: 'center',
     fontSize: 12,
-    marginTop: 4,
+    marginTop: 6,
   },
   errorText: {
-    color: '#dc2626',
+    color: '#ef4444',
     textAlign: 'center',
-    padding: 16,
+    padding: 20,
+    fontSize: 14,
   },
   modalBtnText: {
     fontWeight: '600',
+    fontSize: 14,
   },
 });

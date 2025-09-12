@@ -27,47 +27,6 @@ export default function ChildrenStatsCard({ childrenStats }: Props) {
         </View>
       </View>
 
-      {/* Répartition par genre */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Répartition par Genre</Text>
-        <View style={styles.genderRow}>
-          <View style={styles.genderItem}>
-            <View style={styles.genderBar}>
-              <View 
-                style={[
-                  styles.genderBarFill, 
-                  { 
-                    width: `${malePercentage}%`,
-                    backgroundColor: '#3b82f6'
-                  }
-                ]} 
-              />
-            </View>
-            <View style={styles.genderInfo}>
-              <Text style={styles.genderLabel}>Garçons</Text>
-              <Text style={styles.genderCount}>{childrenStats.byGender.boys} ({malePercentage}%)</Text>
-            </View>
-          </View>
-          <View style={styles.genderItem}>
-            <View style={styles.genderBar}>
-              <View 
-                style={[
-                  styles.genderBarFill, 
-                  { 
-                    width: `${femalePercentage}%`,
-                    backgroundColor: '#ec4899'
-                  }
-                ]} 
-              />
-            </View>
-            <View style={styles.genderInfo}>
-              <Text style={styles.genderLabel}>Filles</Text>
-              <Text style={styles.genderCount}>{childrenStats.byGender.girls} ({femalePercentage}%)</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
       {/* Répartition par âge */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Répartition par Âge</Text>

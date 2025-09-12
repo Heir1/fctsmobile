@@ -162,7 +162,7 @@ export default function NutritionScreen() {
             <Text style={styles.sectionTitle}>Select a child</Text>
             {loadingChildren ? (
               <View style={styles.centered}> 
-                <ActivityIndicator size="large" color="#0ea5e9" />
+                <ActivityIndicator size="large" color="#3b82f6" />
               </View>
             ) : childrenError ? (
               <Text style={styles.errorText}>{childrenError}</Text>
@@ -182,7 +182,7 @@ export default function NutritionScreen() {
             )}
           </View>
         )}
-
+  
         {selectedChild && (
           <View style={{ flex: 1, width: '100%' }}>
             <View style={styles.childHeader}>
@@ -193,7 +193,7 @@ export default function NutritionScreen() {
             </View>
             {loadingRecords ? (
               <View style={styles.centered}>
-                <ActivityIndicator size="large" color="#0ea5e9" />
+                <ActivityIndicator size="large" color="#3b82f6" />
               </View>
             ) : recordsError ? (
               <Text style={styles.errorText}>{recordsError}</Text>
@@ -211,13 +211,13 @@ export default function NutritionScreen() {
                     <Text style={styles.recordLine}>BMI: {item.bmi ?? '—'}</Text>
                     <Text style={styles.recordLine}>Statut: {item.nutrition_status || '—'}</Text>
                     <View style={styles.recordActions}>
-                      <TouchableOpacity onPress={() => openDetail(item.id)} style={styles.actionBtn}>
+                      <TouchableOpacity onPress={() => openDetail(item.id)} style={[styles.actionBtn, styles.viewButton]}>
                         <Text style={styles.actionBtnText}>Details</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => openEditModal(item)} style={styles.actionBtn}>
+                      <TouchableOpacity onPress={() => openEditModal(item)} style={[styles.actionBtn, styles.editButton]}>
                         <Text style={styles.actionBtnText}>Edit</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => confirmDelete(item.id)} style={[styles.actionBtn, styles.deleteBtn]}>
+                      <TouchableOpacity onPress={() => confirmDelete(item.id)} style={[styles.actionBtn, styles.deleteButton]}>
                         <Text style={[styles.actionBtnText, styles.deleteBtnText]}>Delete</Text>
                       </TouchableOpacity>
                     </View>
@@ -228,36 +228,51 @@ export default function NutritionScreen() {
           </View>
         )}
       </View>
-
+  
       {selectedChild && (
         <TouchableOpacity style={styles.fab} onPress={openCreateModal}>
           <Text style={styles.fabText}>+</Text>
         </TouchableOpacity>
       )}
-
+  
       {/* Upsert Modal */}
       <Modal visible={isUpsertOpen} transparent animationType="slide" onRequestClose={() => setIsUpsertOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>{editingRecordId ? 'Edit nutrition record' : 'Create nutrition record'}</Text>
             <ScrollView contentContainerStyle={{ paddingBottom: 12 }}>
-              <Text style={styles.inputLabel}>Date</Text>
-              <DatePickerInput
-                locale="fr"
-                inputMode="start"
-                withModal
-                value={formDate ? new Date(formDate) : undefined}
-                onChange={(d) => setFormDate(d ? d.toISOString().slice(0, 10) : '')}
-                style={styles.input}
-                presentationStyle="pageSheet"
-              />
-
+              <View style={styles.field}>
+                <Text style={styles.inputLabel}>Date</Text>
+                <DatePickerInput
+                  locale="fr"
+                  inputMode="start"
+                  withModal
+                  value={formDate ? new Date(formDate) : undefined}
+                  onChange={(d) => setFormDate(d ? d.toISOString().slice(0, 10) : '')}
+                  presentationStyle="pageSheet"
+                />
+              </View>
+  
               <Text style={styles.inputLabel}>Poids (kg)</Text>
-              <TextInput value={formWeight} onChangeText={setFormWeight} placeholder="25.5" keyboardType="numeric" style={styles.input} />
-
+              <TextInput 
+                value={formWeight} 
+                onChangeText={setFormWeight} 
+                placeholder="25.5" 
+                placeholderTextColor="#6b7280"
+                keyboardType="numeric" 
+                style={styles.input} 
+              />
+  
               <Text style={styles.inputLabel}>Taille (cm)</Text>
-              <TextInput value={formHeight} onChangeText={setFormHeight} placeholder="120.5" keyboardType="numeric" style={styles.input} />
-
+              <TextInput 
+                value={formHeight} 
+                onChangeText={setFormHeight} 
+                placeholder="120.5" 
+                placeholderTextColor="#6b7280"
+                keyboardType="numeric" 
+                style={styles.input} 
+              />
+  
               <Text style={styles.inputLabel}>Statut nutritionnel</Text>
               <View style={styles.selectRow}>
                 {nutritionStatusOptions.map((opt) => (
@@ -268,7 +283,7 @@ export default function NutritionScreen() {
                   </TouchableOpacity>
                 ))}
               </View>
-
+  
               <View style={styles.modalActions}>
                 <TouchableOpacity onPress={() => setIsUpsertOpen(false)} style={[styles.modalBtn, styles.cancelBtn]} disabled={submitting}>
                   <Text style={[styles.modalBtnText, styles.cancelBtnText]}>Cancel</Text>
@@ -281,7 +296,7 @@ export default function NutritionScreen() {
           </View>
         </View>
       </Modal>
-
+  
       {/* Detail Modal */}
       <Modal visible={isDetailOpen} transparent animationType="fade" onRequestClose={() => setIsDetailOpen(false)}>
         <View style={styles.modalOverlay}>
@@ -298,7 +313,7 @@ export default function NutritionScreen() {
                   <Text style={styles.recordLine}>Statut: {detailRecord.nutrition_status}</Text>
                 </View>
               ) : (
-                <ActivityIndicator size="small" color="#0ea5e9" />
+                <ActivityIndicator size="small" color="#3b82f6" />
               )}
             </ScrollView>
             <View style={styles.modalActions}>
@@ -314,48 +329,275 @@ export default function NutritionScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  header: { backgroundColor: 'white', paddingHorizontal: 24, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#e5e7eb' },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#1f2937' },
-  subtitle: { color: '#6b7280', marginTop: 4 },
-  content: { flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' },
-  placeholder: { color: '#6b7280' },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#1f2937', paddingHorizontal: 16, marginVertical: 12 },
-  childCard: { backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: '#e5e7eb' },
-  childName: { fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 4 },
-  childMeta: { color: '#6b7280' },
-  childMetaSmall: { color: '#9ca3af', marginTop: 2 },
-  childHeader: { paddingHorizontal: 16, marginTop: 8, marginBottom: 8 },
-  backBtn: { marginTop: 4 },
-  backBtnText: { color: '#2563eb', fontWeight: '600' },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  recordCard: { backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: '#e5e7eb' },
-  recordDate: { fontWeight: '700', marginBottom: 6, color: '#111827' },
-  recordLine: { color: '#374151', marginTop: 2 },
-  recordActions: { flexDirection: 'row', gap: 12, marginTop: 12 },
-  actionBtn: { paddingVertical: 6, paddingHorizontal: 12, backgroundColor: '#e5e7eb', borderRadius: 8 },
-  actionBtnText: { color: '#111827', fontWeight: '600' },
-  deleteBtn: { backgroundColor: '#fee2e2' },
-  deleteBtnText: { color: '#991b1b' },
-  fab: { position: 'absolute', right: 20, bottom: 30, width: 56, height: 56, borderRadius: 28, backgroundColor: '#0ea5e9', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 6, elevation: 6 },
-  fabText: { color: 'white', fontSize: 28, fontWeight: '700', marginTop: -2 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', padding: 20, justifyContent: 'center' },
-  modalCard: { backgroundColor: 'white', borderRadius: 16, padding: 16, maxHeight: '85%' },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: '#111827', marginBottom: 12 },
-  inputLabel: { fontWeight: '600', color: '#374151', marginTop: 8, marginBottom: 4 },
-  input: { borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: '#f9fafb' },
-  selectRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 },
-  selectPill: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 9999, backgroundColor: '#f3f4f6' },
-  selectPillActive: { backgroundColor: '#dbeafe' },
-  selectPillText: { color: '#374151', fontWeight: '600' },
-  selectPillTextActive: { color: '#1e40af' },
-  modalActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 12, marginTop: 12 },
-  modalBtn: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10 },
-  cancelBtn: { backgroundColor: '#f3f4f6' },
-  cancelBtnText: { color: '#111827' },
-  saveBtn: { backgroundColor: '#0ea5e9' },
-  saveBtnText: { color: 'white', fontWeight: '700' },
-  errorText: { color: '#dc2626', textAlign: 'center', padding: 16 },
+  container: {
+    flex: 1,
+    backgroundColor: '#111827',
+  },
+  header: {
+    backgroundColor: '#1f2937',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#374151',
+  },
+  field: {
+    marginBottom: 16
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#f9fafb',
+    letterSpacing: 0.5,
+  },
+  subtitle: {
+    color: '#9ca3af',
+    marginTop: 6,
+    fontSize: 14,
+  },
+  content: {
+    flex: 1,
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
+    backgroundColor: '#111827',
+  },
+  placeholder: {
+    color: '#6b7280',
+    textAlign: 'center',
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#f9fafb',
+    paddingHorizontal: 20,
+    marginVertical: 16,
+    letterSpacing: 0.3,
+  },
+  childCard: {
+    backgroundColor: '#1f2937',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#374151',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  childName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#f9fafb',
+    marginBottom: 6,
+  },
+  childMeta: {
+    color: '#d1d5db',
+    fontSize: 14,
+  },
+  childMetaSmall: {
+    color: '#9ca3af',
+    marginTop: 4,
+    fontSize: 12,
+  },
+  childHeader: {
+    paddingHorizontal: 20,
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  backBtn: {
+    marginTop: 8,
+    padding: 8,
+  },
+  backBtnText: {
+    color: '#3b82f6',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recordCard: {
+    backgroundColor: '#1f2937',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#374151',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  recordDate: {
+    fontWeight: '700',
+    marginBottom: 8,
+    color: '#f9fafb',
+    fontSize: 16,
+  },
+  recordLine: {
+    color: '#e5e7eb',
+    marginTop: 4,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  recordActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 16,
+    flexWrap: 'wrap',
+  },
+  actionBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  actionBtnText: {
+    color: '#f9fafb',
+    fontWeight: '600',
+    fontSize: 12,
+  },
+  viewButton: {
+    backgroundColor: '#3B82F6',
+  },
+  editButton: {
+    backgroundColor: '#F59E0B',
+  },
+  deleteButton: {
+    backgroundColor: '#EF4444',
+  },
+  deleteBtnText: {
+    color: '#fecaca',
+  },
+  fab: {
+    position: 'absolute',
+    right: 24,
+    bottom: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#3b82f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  fabText: {
+    color: 'white',
+    fontSize: 32,
+    fontWeight: '300',
+    marginTop: -2,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    padding: 20,
+    justifyContent: 'center',
+  },
+  modalCard: {
+    backgroundColor: '#1f2937',
+    borderRadius: 20,
+    padding: 24,
+    maxHeight: '85%',
+    borderWidth: 1,
+    borderColor: '#374151',
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#f9fafb',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  inputLabel: {
+    fontWeight: '600',
+    color: '#e5e7eb',
+    marginTop: 16,
+    marginBottom: 8,
+    fontSize: 14,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#374151',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#111827',
+    color: '#f9fafb',
+    fontSize: 14,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+    marginTop: 20,
+  },
+  modalBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  cancelBtn: {
+    backgroundColor: '#374151',
+  },
+  cancelBtnText: {
+    color: '#f9fafb',
+    fontWeight: '600',
+  },
+  saveBtn: {
+    backgroundColor: '#3b82f6',
+  },
+  saveBtnText: {
+    color: 'white',
+    fontWeight: '700',
+  },
+  selectRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginTop: 8,
+  },
+  selectPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#374151',
+    borderWidth: 1,
+    borderColor: '#4b5563',
+  },
+  selectPillActive: {
+    backgroundColor: '#1d4ed8',
+    borderColor: '#3b82f6',
+  },
+  selectPillText: {
+    color: '#d1d5db',
+    fontWeight: '600',
+    fontSize: 12,
+  },
+  selectPillTextActive: {
+    color: '#ffffff',
+  },
+  errorText: {
+    color: '#ef4444',
+    textAlign: 'center',
+    padding: 20,
+    fontSize: 14,
+  },
+  modalBtnText: {
+    fontWeight: '600',
+    fontSize: 14,
+  },
 });
 
 

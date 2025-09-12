@@ -1,11 +1,14 @@
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, I18nManager, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, I18nManager, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Dimensions } from 'react-native';
 import { DatePickerInput } from 'react-native-paper-dates';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { childrenService } from '../services/childrenService';
 import { ChildSummary, ChildrenListResponse } from '../types/child';
+import { Ionicons } from '@expo/vector-icons';
+
+const { width } = Dimensions.get('window');
 
 export default function ChildrenScreen() {
   const router = useRouter();
@@ -80,15 +83,38 @@ export default function ChildrenScreen() {
 
   const renderItem = ({ item }: { item: ChildSummary }) => (
     <View style={styles.card}>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.childName}>{item.full_name}</Text>
-        <Text style={styles.childMeta}>Age estimé: {item.estimated_age ?? 'N/A'} • {item.gender === 'M' ? 'Garçon' : 'Fille'}</Text>
-        <Text style={styles.childMeta}>Orphelinat: {item.orphanage?.name ?? '—'}</Text>
+      <View style={styles.cardHeader}>
+        <View style={[styles.avatarContainer, item.gender === 'M' ? styles.avatarMale : styles.avatarFemale]}>
+          <Ionicons 
+            name={item.gender === 'M' ? 'male' : 'female'} 
+            size={24} 
+            color={item.gender === 'M' ? '#60A5FA' : '#F472B6'} 
+          />
+        </View>
+        <View style={styles.childInfo}>
+          <Text style={styles.childName}>{item.full_name}</Text>
+          <View style={styles.metaContainer}>
+            <View style={styles.metaItem}>
+              <Ionicons name="time-outline" size={14} color="#9CA3AF" />
+              <Text style={styles.childMeta}>Âge: {item.estimated_age ?? 'N/A'}</Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Ionicons name="business-outline" size={14} color="#9CA3AF" />
+              <Text style={styles.childMeta}>{item.orphanage?.name ?? '—'}</Text>
+            </View>
+          </View>
+        </View>
       </View>
+      
       <View style={styles.actionsRow}>
-        <TouchableOpacity style={styles.actionButton} onPress={() => router.push({ pathname: '/children/[id]', params: { id: item.id } })}>
+        <TouchableOpacity 
+          style={[styles.actionButton, styles.viewButton]}
+          onPress={() => router.push({ pathname: '/children/[id]', params: { id: item.id } })}
+        >
+          {/* <Ionicons name="eye-outline" size={16} color="white" /> */}
           <Text style={styles.actionText}>View</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity 
           style={[styles.actionButton, styles.editButton]}
           onPress={() => {
@@ -105,8 +131,10 @@ export default function ChildrenScreen() {
             setIsEditOpen(true);
           }}
         >
-          <Text style={[styles.actionText, styles.editText]}>Edit</Text>
+          {/* <Ionicons name="create-outline" size={16} color="white" /> */}
+          <Text style={styles.actionText}>Edit</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity 
           style={[styles.actionButton, styles.deleteButton]}
           onPress={() => {
@@ -114,55 +142,82 @@ export default function ChildrenScreen() {
             setIsDeleteConfirmOpen(true);
           }}
         >
-          <Text style={[styles.actionText, styles.deleteText]}>Delete</Text>
+          {/* <Ionicons name="trash-outline" size={16} color="white" /> */}
+          <Text style={styles.actionText}>Delete</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Children</Text>
-        <Text style={styles.subtitle}>Liste des enfants</Text>
+        <View>
+          <Text style={styles.title}>Children</Text>
+          <Text style={styles.subtitle}>Registered children list</Text>
+        </View>
+        <View style={styles.headerStats}>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>{childrenData.length}</Text>
+            <Text style={styles.statLabel}>Total</Text>
+          </View>
+        </View>
       </View>
+      
       {/* FAB */}
       <TouchableOpacity style={styles.fab} onPress={() => setIsCreateOpen(true)}>
-        <Text style={styles.fabText}>+</Text>
+        <Ionicons name="add" size={28} color="white" />
       </TouchableOpacity>
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0ea5e9" />
-        </View>
-      ) : error ? (
-        <View style={styles.errorCard}>
-          <Text style={styles.errorTitle}>Erreur</Text>
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={loadChildren}>
-            <Text style={styles.retryText}>Réessayer</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <FlatList
-          data={childrenData}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          contentContainerStyle={{ padding: 16 }}
-          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-        />
-      )}
+      
+      {
 
-      {/* Create Modal */}
+          loading ? (
+            <View style={styles.centerContainer}>
+              <ActivityIndicator size="large" color="#A78BFA" />
+              <Text style={styles.loadingText}>Chargement des enfants...</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.errorCard}>
+              <Ionicons name="alert-circle-outline" size={32} color="#F87171" />
+              <Text style={styles.errorTitle}>Erreur de chargement</Text>
+              <Text style={styles.errorText}>{error}</Text>
+              <TouchableOpacity style={styles.retryButton} onPress={loadChildren}>
+                <Text style={styles.retryText}>Réessayer</Text>
+              </TouchableOpacity>
+            </View>
+          ) : childrenData.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Ionicons name="people-outline" size={64} color="#4B5563" />
+              <Text style={styles.emptyTitle}>Aucun enfant enregistré</Text>
+              <Text style={styles.emptyText}>Commencez par ajouter un enfant à la liste</Text>
+              <TouchableOpacity style={styles.addFirstButton} onPress={() => setIsCreateOpen(true)}>
+                <Text style={styles.addFirstText}>Ajouter un enfant</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <FlatList
+              data={childrenData}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              contentContainerStyle={styles.listContent}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              showsVerticalScrollIndicator={false}
+            />
+          )
+        }  
+  
+      {/* Modals avec dark mode */}
       <Modal visible={isCreateOpen} transparent animationType="fade" onRequestClose={() => setIsCreateOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <ScrollView contentContainerStyle={styles.modalScroll} keyboardShouldPersistTaps="handled">
               <Text style={styles.modalTitle}>Ajouter un enfant</Text>
               {!!error && <Text style={styles.modalError}>{error}</Text>}
-
+  
               <TextInput
                 style={[styles.input, styles.field]}
                 placeholder="Nom complet"
+                placeholderTextColor="#9CA3AF"
                 value={form.full_name}
                 onChangeText={(t) => setForm({ ...form, full_name: t })}
               />
@@ -174,7 +229,7 @@ export default function ChildrenScreen() {
                   <Text style={[styles.segmentText, form.gender === 'F' && styles.segmentTextActive]}>Fille</Text>
                 </Pressable>
               </View>
-
+  
               <View style={styles.field}>
                 <Text style={styles.label}>Date de naissance</Text>
                 <DatePickerInput
@@ -187,7 +242,12 @@ export default function ChildrenScreen() {
               </View>
               <View style={styles.field}>
                 <Text style={styles.label}>Âge estimé</Text>
-                <Picker selectedValue={form.estimated_age} onValueChange={(v) => setForm({ ...form, estimated_age: String(v) })}>
+                <Picker 
+                  selectedValue={form.estimated_age} 
+                  onValueChange={(v) => setForm({ ...form, estimated_age: String(v) })}
+                  style={styles.picker}
+                  dropdownIconColor="#9CA3AF"
+                >
                   <Picker.Item label="Sélectionner l'âge" value="" />
                   {ageOptions.map((a) => (
                     <Picker.Item key={a} label={a} value={a} />
@@ -206,7 +266,12 @@ export default function ChildrenScreen() {
               </View>
               <View style={styles.field}>
                 <Text style={styles.label}>Statut parental</Text>
-                <Picker selectedValue={form.parent_status} onValueChange={(v) => setForm({ ...form, parent_status: String(v) })}>
+                <Picker 
+                  selectedValue={form.parent_status} 
+                  onValueChange={(v) => setForm({ ...form, parent_status: String(v) })}
+                  style={styles.picker}
+                  dropdownIconColor="#9CA3AF"
+                >
                   <Picker.Item label="Orphelin total" value="total_orphan" />
                   <Picker.Item label="Orphelin partiel" value="partial_orphan" />
                   <Picker.Item label="abandonné" value="abandoned" />
@@ -215,10 +280,11 @@ export default function ChildrenScreen() {
               <TextInput
                 style={[styles.input, styles.field]}
                 placeholder="Code interne (optionnel)"
+                placeholderTextColor="#9CA3AF"
                 value={form.internal_code}
                 onChangeText={(t) => setForm({ ...form, internal_code: t })}
               />
-
+  
               <View style={styles.modalActions}>
                 <TouchableOpacity 
                   style={[styles.btn, styles.btnGhost, styles.btnHalf]} 
@@ -265,7 +331,8 @@ export default function ChildrenScreen() {
         </View>
       </Modal>
 
-      {/* Edit Modal */}
+      {/* Edit modal */}
+
       <Modal visible={isEditOpen} transparent animationType="fade" onRequestClose={() => setIsEditOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
@@ -276,6 +343,7 @@ export default function ChildrenScreen() {
               <TextInput
                 style={[styles.input, styles.field]}
                 placeholder="Nom complet"
+                placeholderTextColor="#9CA3AF"
                 value={editForm.full_name}
                 onChangeText={(t) => setEditForm({ ...editForm, full_name: t })}
               />
@@ -298,9 +366,15 @@ export default function ChildrenScreen() {
                   withModal
                 />
               </View>
+              
               <View style={styles.field}>
                 <Text style={styles.label}>Âge estimé</Text>
-                <Picker selectedValue={editForm.estimated_age} onValueChange={(v) => setEditForm({ ...editForm, estimated_age: String(v) })}>
+                <Picker 
+                  selectedValue={editForm.estimated_age} 
+                  onValueChange={(v) => setEditForm({ ...editForm, estimated_age: String(v) })}
+                  style={styles.picker}
+                  dropdownIconColor="#9CA3AF"
+                >
                   <Picker.Item label="Sélectionner l'âge" value="" />
                   {ageOptions.map((a) => (
                     <Picker.Item key={a} label={a} value={a} />
@@ -319,7 +393,12 @@ export default function ChildrenScreen() {
               </View>
               <View style={styles.field}>
                 <Text style={styles.label}>Statut parental</Text>
-                <Picker selectedValue={editForm.parent_status} onValueChange={(v) => setEditForm({ ...editForm, parent_status: String(v) })}>
+                <Picker 
+                  selectedValue={editForm.parent_status} 
+                  onValueChange={(v) => setEditForm({ ...editForm, parent_status: String(v) })}
+                  style={styles.picker}
+                  dropdownIconColor="#9CA3AF"
+                >
                   <Picker.Item label="Orphelin total" value="total_orphan" />
                   <Picker.Item label="Orphelin partiel" value="partial_orphan" />
                   <Picker.Item label="abandonné" value="abandoned" />
@@ -328,6 +407,7 @@ export default function ChildrenScreen() {
               <TextInput
                 style={[styles.input, styles.field]}
                 placeholder="Code interne (optionnel)"
+                placeholderTextColor="#9CA3AF"
                 value={editForm.internal_code}
                 onChangeText={(t) => setEditForm({ ...editForm, internal_code: t })}
               />
@@ -437,57 +517,350 @@ export default function ChildrenScreen() {
           </View>
         </View>
       </Modal>
+
     </SafeAreaView>
+
   );
+  
+
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  header: { backgroundColor: 'white', paddingHorizontal: 24, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#e5e7eb' },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#111827' },
-  subtitle: { color: '#6b7280' },
-  fab: { position: 'absolute', right: 20, bottom: 20, width: 56, height: 56, backgroundColor: '#0ea5e9', borderRadius: 28, justifyContent: 'center', alignItems: 'center', zIndex: 10, elevation: 5 },
-  fabText: { color: 'white', fontSize: 28, fontWeight: '800', marginTop: -2 },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  errorCard: { backgroundColor: '#fef3c7', margin: 16, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#f59e0b' },
-  errorTitle: { fontSize: 16, fontWeight: '700', color: '#92400e', marginBottom: 4 },
-  errorText: { color: '#b45309', marginBottom: 8 },
-  retryButton: { backgroundColor: '#f59e0b', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 8, alignSelf: 'flex-start' },
-  retryText: { color: 'white', fontWeight: '600' },
-  card: { backgroundColor: 'white', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#e5e7eb', flexDirection: 'row', alignItems: 'center' },
-  childName: { fontSize: 16, fontWeight: '700', color: '#111827' },
-  childMeta: { color: '#6b7280', marginTop: 2 },
-  actionsRow: { flexDirection: 'row', gap: 8, marginLeft: 8 },
-  actionButton: { backgroundColor: '#eef2ff', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
-  actionText: { color: '#1e40af', fontWeight: '600' },
-  editButton: { backgroundColor: '#ecfeff' },
-  editText: { color: '#0369a1' },
-  deleteButton: { backgroundColor: '#fee2e2' },
-  deleteText: { color: '#b91c1c' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', padding: 20 },
-  modalCard: { backgroundColor: 'white', borderRadius: 16, padding: 16 },
-  modalScroll: { paddingBottom: 8 },
-  modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: 12, color: '#111827' },
-  modalError: { color: '#b91c1c', marginBottom: 8 },
-  input: { borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10, paddingVertical: 10, paddingHorizontal: 12, marginBottom: 10, backgroundColor: '#fff' },
-  field: { marginBottom: 12 },
-  rowInline: { flexDirection: 'row', gap: 8, marginBottom: 10 },
-  segment: { flex: 1, borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 5, paddingVertical: 10, alignItems: 'center' },
-  segmentActive: { backgroundColor: '#e0f2fe', borderColor: '#38bdf8' },
-  segmentText: { color: '#374151', fontWeight: '600' },
-  segmentTextActive: { color: '#0369a1' },
-  modalActions: { flexDirection: 'row', justifyContent: 'space-between', gap: 8, marginTop: 4 },
-  btn: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 5, flex: 1 },
-  btnHalf: { flex: 1 },
-  btnPrimary: { backgroundColor: '#0ea5e9' },
-  btnText: { color: 'white', fontWeight: '700', textAlign: 'center' },
-  btnGhost: { backgroundColor: '#f3f4f6' },
-  btnGhostText: { color: '#111827' },
-  btnDanger: { backgroundColor: '#dc2626' },
-  label: { fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 4 },
-  col: { marginBottom: 0 },
-  deleteConfirmText: { fontSize: 16, color: '#374151', marginBottom: 10, textAlign: 'center' },
-  deleteWarningText: { fontSize: 14, color: '#dc2626', marginBottom: 20, textAlign: 'center' },
-});
-
-
+    container: { 
+      flex: 1, 
+      backgroundColor: '#111827' 
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: '#1F2937',
+      borderBottomWidth: 1,
+      borderBottomColor: '#374151'
+    },
+    title: { 
+      fontSize: 28, 
+      fontWeight: '800', 
+      color: '#F9FAFB' 
+    },
+    subtitle: { 
+      color: '#9CA3AF', 
+      fontSize: 14,
+      marginTop: 2
+    },
+    headerStats: {
+      flexDirection: 'row'
+    },
+    statItem: {
+      alignItems: 'center',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      backgroundColor: '#374151',
+      borderRadius: 12
+    },
+    statNumber: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: '#A78BFA'
+    },
+    statLabel: {
+      fontSize: 12,
+      color: '#D1D5DB'
+    },
+    fab: { 
+      position: 'absolute', 
+      right: 20, 
+      bottom: 20, 
+      width: 60, 
+      height: 60, 
+      backgroundColor: '#8B5CF6', 
+      borderRadius: 30, 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      zIndex: 10, 
+      elevation: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.5,
+      shadowRadius: 3.84,
+    },
+    centerContainer: { 
+      flex: 1, 
+      justifyContent: 'center', 
+      alignItems: 'center' 
+    },
+    loadingText: {
+      marginTop: 12,
+      color: '#9CA3AF'
+    },
+    errorCard: { 
+      backgroundColor: '#1F2937', 
+      margin: 20, 
+      padding: 24, 
+      borderRadius: 16, 
+      borderWidth: 1, 
+      borderColor: '#F87171',
+      alignItems: 'center'
+    },
+    errorTitle: { 
+      fontSize: 18, 
+      fontWeight: '700', 
+      color: '#F87171', 
+      marginTop: 12,
+      marginBottom: 8 
+    },
+    errorText: { 
+      color: '#FCA5A5', 
+      marginBottom: 16,
+      textAlign: 'center'
+    },
+    retryButton: { 
+      backgroundColor: '#DC2626', 
+      paddingVertical: 10, 
+      paddingHorizontal: 20, 
+      borderRadius: 8
+    },
+    retryText: { 
+      color: 'white', 
+      fontWeight: '600' 
+    },
+    emptyState: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20
+    },
+    emptyTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: '#E5E7EB',
+      marginTop: 16
+    },
+    emptyText: {
+      color: '#9CA3AF',
+      textAlign: 'center',
+      marginTop: 8,
+      marginBottom: 24
+    },
+    addFirstButton: {
+      backgroundColor: '#8B5CF6',
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      borderRadius: 8
+    },
+    addFirstText: {
+      color: 'white',
+      fontWeight: '600'
+    },
+    listContent: { 
+      padding: 16 
+    },
+    separator: { 
+      height: 12 
+    },
+    card: {
+      backgroundColor: '#1F2937',
+      borderRadius: 16,
+      padding: 16,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      elevation: 3,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 16
+    },
+    avatarContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12
+    },
+    avatarMale: {
+      backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    },
+    avatarFemale: {
+      backgroundColor: 'rgba(236, 72, 153, 0.2)',
+    },
+    childInfo: {
+      flex: 1
+    },
+    childName: { 
+      fontSize: 16, 
+      fontWeight: '700', 
+      color: '#F9FAFB',
+      marginBottom: 4
+    },
+    metaContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap'
+    },
+    metaItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: 16,
+      marginBottom: 4
+    },
+    childMeta: { 
+      color: '#9CA3AF', 
+      fontSize: 13,
+      marginLeft: 4
+    },
+    actionsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    actionButton: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 4,
+      paddingVertical: 6,
+      borderRadius: 8,
+      gap: 6
+    },
+    viewButton: {
+      backgroundColor: '#3B82F6',
+    },
+    editButton: {
+      backgroundColor: '#F59E0B',
+    },
+    deleteButton: {
+      backgroundColor: '#EF4444',
+    },
+    actionText: {
+      color: 'white',
+      fontWeight: '600',
+      fontSize: 12,
+    },
+    // Styles pour les modals en dark mode
+    modalOverlay: { 
+      flex: 1, 
+      backgroundColor: 'rgba(0,0,0,0.7)', 
+      justifyContent: 'center', 
+      padding: 20 
+    },
+    modalCard: { 
+      backgroundColor: '#1F2937', 
+      borderRadius: 16, 
+      maxHeight: '80%' 
+    },
+    modalScroll: { 
+      padding: 20 
+    },
+    modalTitle: { 
+      fontSize: 20, 
+      fontWeight: '700', 
+      marginBottom: 16, 
+      color: '#F9FAFB' 
+    },
+    modalError: {
+      color: '#FCA5A5',
+      marginBottom: 16,
+      textAlign: 'center'
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: '#374151',
+      borderRadius: 10,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: '#111827',
+      color: '#F9FAFB',
+      fontSize: 16
+    },
+    field: {
+      marginBottom: 16
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: '#D1D5DB',
+      marginBottom: 8
+    },
+    rowInline: {
+      flexDirection: 'row',
+      gap: 8
+    },
+    segment: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: '#374151',
+      borderRadius: 8,
+      paddingVertical: 12,
+      alignItems: 'center',
+      backgroundColor: '#111827'
+    },
+    segmentActive: {
+      backgroundColor: 'rgba(139, 92, 246, 0.2)',
+      borderColor: '#8B5CF6'
+    },
+    segmentText: {
+      color: '#9CA3AF',
+      fontWeight: '600'
+    },
+    segmentTextActive: {
+      color: '#8B5CF6'
+    },
+    picker: {
+      color: '#F9FAFB',
+      backgroundColor: '#111827',
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: '#374151'
+    },
+    modalActions: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: 12,
+      marginTop: 8
+    },
+    btn: {
+      paddingVertical: 12,
+      borderRadius: 8,
+      alignItems: 'center'
+    },
+    btnHalf: {
+      flex: 1
+    },
+    btnPrimary: {
+      backgroundColor: '#8B5CF6'
+    },
+    btnGhost: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: '#374151'
+    },
+    btnDanger: {
+      backgroundColor: '#DC2626'
+    },
+    btnText: {
+      color: 'white',
+      fontWeight: '600',
+      fontSize: 16
+    },
+    btnGhostText: {
+      color: '#9CA3AF'
+    },
+    deleteConfirmText: {
+      fontSize: 16,
+      color: '#E5E7EB',
+      marginBottom: 12,
+      textAlign: 'center'
+    },
+    deleteWarningText: {
+      fontSize: 14,
+      color: '#F87171',
+      marginBottom: 24,
+      textAlign: 'center'
+    }
+  });

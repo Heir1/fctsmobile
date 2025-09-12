@@ -18,6 +18,8 @@ import { orphanageService } from '../services/orphanageService';
 import { OrphanageStats } from '../types/orphanage';
 import Sidebar from './Sidebar';
 import DashboardStats from './stats/DashboardStats';
+import { Ionicons } from '@expo/vector-icons';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function DashboardScreen() {
   const { user, logout } = useAuth();
@@ -144,40 +146,81 @@ export default function DashboardScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      {/* Header avec effet glassmorphism */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={openSidebar} style={styles.menuButton}>
-            <Text style={styles.menuIcon}>☰</Text>
+          <TouchableOpacity 
+            onPress={openSidebar} 
+            style={styles.menuButton}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="menu" size={28} color="#3b82f6" />
           </TouchableOpacity>
-          <View>
+          
+          <View style={styles.headerTextContainer}>
             <Text style={styles.headerTitle}>Dashboard</Text>
+            <Text style={styles.headerSubtitle}>Overview & Analytics</Text>
           </View>
-
+  
+          <View style={styles.headerActions}>
+            <TouchableOpacity 
+              style={styles.refreshButton}
+              onPress={onRefresh}
+              activeOpacity={0.7}
+            >
+              <Ionicons 
+                name="refresh" 
+                size={22} 
+                color={refreshing ? '#3b82f6' : '#9ca3af'} 
+                style={refreshing && styles.refreshingIcon}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-
+  
       {/* Content */}
       <ScrollView 
         style={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh}
+            tintColor="#3b82f6"
+            colors={['#3b82f6']}
+          />
         }
+        showsVerticalScrollIndicator={false}
       >
         {error && (
           <View style={styles.errorCard}>
-            <Text style={styles.errorTitle}>⚠️ Données de démonstration</Text>
-            <Text style={styles.errorText}>
-              {error}. Affichage des données de démonstration.
+            <View style={styles.errorIconContainer}>
+              <Ionicons name="warning" size={24} color="#d97706" />
+            </View>
+            <View style={styles.errorTextContainer}>
+              <Text style={styles.errorTitle}>Demo Data Active</Text>
+              <Text style={styles.errorText}>
+                {error}. Displaying sample demonstration data.
+              </Text>
+            </View>
+          </View>
+        )}
+  
+        {stats && <DashboardStats stats={stats} />}
+  
+        {/* Empty state illustration */}
+        {!stats && !refreshing && (
+          <View style={styles.emptyState}>
+            <Ionicons name="stats-chart" size={64} color="#374151" />
+            <Text style={styles.emptyStateTitle}>No Data Available</Text>
+            <Text style={styles.emptyStateText}>
+              Pull down to refresh or check your connection
             </Text>
           </View>
         )}
-
-        {stats && <DashboardStats stats={stats} />}
-
       </ScrollView>
-
-      {/* Sidebar + Overlay */}
+  
+      {/* Sidebar + Overlay avec animations améliorées */}
       {isSidebarOpen && (
         <View style={styles.overlayContainer}>
           <Animated.View
@@ -188,73 +231,142 @@ export default function DashboardScreen() {
                   {
                     translateX: sidebarAnim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [-sidebarWidth, 0],
+                      outputRange: [-300, 0],
                     }),
                   },
                 ],
+                opacity: sidebarAnim,
               },
             ]}
           >
-            <Sidebar onNavigateHome={navigateHome} onNavigateChildren={navigateChildren} onNavigateHealth={navigateHealth} onNavigateNutrition={navigateNutrition} onClose={closeSidebar} onLogout={handleLogout} />
+            <Sidebar 
+              onNavigateHome={navigateHome} 
+              onNavigateChildren={navigateChildren} 
+              onNavigateHealth={navigateHealth} 
+              onNavigateNutrition={navigateNutrition} 
+              onClose={closeSidebar} 
+              onLogout={handleLogout} 
+            />
           </Animated.View>
-          <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={closeSidebar} />
+          <TouchableOpacity 
+            style={styles.overlay} 
+            activeOpacity={1} 
+            onPress={closeSidebar}
+          />
         </View>
       )}
+  
+      {/* Floating action button */}
+      <TouchableOpacity 
+        style={styles.fab}
+        onPress={onRefresh}
+        activeOpacity={0.9}
+      >
+        <Ionicons 
+          name="refresh" 
+          size={24} 
+          color="#ffffff" 
+          style={refreshing && styles.fabRefreshing}
+        />
+      </TouchableOpacity>
     </SafeAreaView>
   );
+
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#232528',
+    backgroundColor: '#0f172a',
   },
   header: {
-    backgroundColor: '#232528',
+    backgroundColor: 'rgba(35, 37, 40, 0.95)',
     paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingVertical: 20,
+    paddingTop: 35,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-between',
+    justifyContent: 'space-between',
   },
   menuButton: {
-    marginRight: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#232528',
+    padding: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.2)',
   },
-  menuIcon: {
-    fontSize: 24,
-    color: '#ffffff',
-    fontWeight: '700',
+  headerTextContainer: {
+    flex: 1,
+    marginLeft: 16,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#ffffff',
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#f8fafc',
+    letterSpacing: -0.5,
+    marginBottom: 2,
   },
   headerSubtitle: {
-    color: '#6b7280',
+    fontSize: 14,
+    color: '#94a3b8',
+    fontWeight: '500',
   },
-  logoutButton: {
-    backgroundColor: '#ef4444',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  logoutButtonText: {
-    color: 'white',
-    fontWeight: '600',
+  refreshButton: {
+    padding: 10,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  refreshingIcon: {
+    transform: [{ rotate: '360deg' }],
   },
   content: {
     flex: 1,
+    backgroundColor: '#0f172a',
+  },
+  errorCard: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    borderRadius: 20,
+    padding: 20,
+    margin: 20,
+    marginTop: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.3)',
+    alignItems: 'center',
+  },
+  errorIconContainer: {
+    marginRight: 16,
+  },
+  errorTextContainer: {
+    flex: 1,
+  },
+  errorTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#f59e0b',
+    marginBottom: 4,
+    letterSpacing: -0.2,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#fbbf24',
+    lineHeight: 20,
   },
   overlayContainer: {
     position: 'absolute',
@@ -263,70 +375,69 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: 'row',
+    zIndex: 1000,
   },
   overlay: {
-    width: '25%',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   sidebarContainer: {
-    width: '75%',
-    backgroundColor: 'white',
+    width: 300,
+    backgroundColor: '#111827',
     shadowColor: '#000',
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 4, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 16,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 60,
+    marginVertical: 40,
+  },
+  emptyStateTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#94a3b8',
+    marginTop: 20,
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: '#64748b',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  fab: {
+    position: 'absolute',
+    right: 24,
+    bottom: 32,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#3b82f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+  },
+  fabRefreshing: {
+    transform: [{ rotate: '360deg' }],
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 40,
   },
   loadingText: {
-    marginTop: 16,
+    marginTop: 20,
     fontSize: 16,
-    color: '#6b7280',
-  },
-  errorCard: {
-    backgroundColor: '#fef3c7',
-    borderRadius: 12,
-    padding: 16,
-    margin: 20,
-    borderWidth: 1,
-    borderColor: '#f59e0b',
-  },
-  errorTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#92400e',
-    marginBottom: 8,
-  },
-  errorText: {
-    fontSize: 14,
-    color: '#b45309',
-  },
-  successCard: {
-    backgroundColor: '#dbeafe',
-    borderRadius: 12,
-    padding: 24,
-    margin: 20,
-    borderWidth: 1,
-    borderColor: '#93c5fd',
-  },
-  successTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1e40af',
-    marginBottom: 8,
-  },
-  successText: {
-    color: '#1d4ed8',
-    marginBottom: 8,
-  },
-  successList: {
-    marginTop: 8,
-  },
-  successItem: {
-    color: '#1e40af',
-    marginBottom: 2,
+    color: '#64748b',
+    fontWeight: '500',
   },
 });
