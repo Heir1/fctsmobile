@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { DatePickerInput } from 'react-native-paper-dates';
+import UnifiedHeader from '../components/UnifiedHeader';
 import { childrenService } from '../services/childrenService';
 import { healthService } from '../services/healthService';
 import { ChildSummary } from '../types/child';
@@ -194,10 +195,12 @@ export default function HealthScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Health</Text>
-        <Text style={styles.subtitle}>Manage health records</Text>
-      </View>
+      <UnifiedHeader
+        title="Health"
+        subtitle="Manage health records"
+        showRefresh={false}
+        showMenu={false}
+      />
       <View style={styles.content}>
         {!selectedChild && (
           <View style={{ flex: 1, width: '100%' }}>
@@ -463,28 +466,10 @@ export default function HealthScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111827',
-  },
-  header: {
-    backgroundColor: '#1f2937',
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#374151',
+    backgroundColor: '#0f172a',
   },
   field: {
     marginBottom: 16
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#f9fafb',
-    letterSpacing: 0.5,
-  },
-  subtitle: {
-    color: '#9ca3af',
-    marginTop: 6,
-    fontSize: 14,
   },
   content: {
     flex: 1,

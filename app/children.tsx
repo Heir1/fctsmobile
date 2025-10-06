@@ -1,12 +1,13 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, I18nManager, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Dimensions } from 'react-native';
+import { ActivityIndicator, Dimensions, FlatList, I18nManager, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { DatePickerInput } from 'react-native-paper-dates';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import UnifiedHeader from '../components/UnifiedHeader';
 import { childrenService } from '../services/childrenService';
 import { ChildSummary, ChildrenListResponse } from '../types/child';
-import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -151,18 +152,12 @@ export default function ChildrenScreen() {
   
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>Children</Text>
-          <Text style={styles.subtitle}>Registered children list</Text>
-        </View>
-        <View style={styles.headerStats}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{childrenData.length}</Text>
-            <Text style={styles.statLabel}>Total</Text>
-          </View>
-        </View>
-      </View>
+      <UnifiedHeader
+        title="Children"
+        subtitle="Registered children list"
+        showRefresh={false}
+        showMenu={false}
+      />
       
       {/* FAB */}
       <TouchableOpacity style={styles.fab} onPress={() => setIsCreateOpen(true)}>
@@ -528,46 +523,7 @@ export default function ChildrenScreen() {
 const styles = StyleSheet.create({
     container: { 
       flex: 1, 
-      backgroundColor: '#111827' 
-    },
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-      backgroundColor: '#1F2937',
-      borderBottomWidth: 1,
-      borderBottomColor: '#374151'
-    },
-    title: { 
-      fontSize: 28, 
-      fontWeight: '800', 
-      color: '#F9FAFB' 
-    },
-    subtitle: { 
-      color: '#9CA3AF', 
-      fontSize: 14,
-      marginTop: 2
-    },
-    headerStats: {
-      flexDirection: 'row'
-    },
-    statItem: {
-      alignItems: 'center',
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      backgroundColor: '#374151',
-      borderRadius: 12
-    },
-    statNumber: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: '#A78BFA'
-    },
-    statLabel: {
-      fontSize: 12,
-      color: '#D1D5DB'
+      backgroundColor: '#0f172a' 
     },
     fab: { 
       position: 'absolute', 

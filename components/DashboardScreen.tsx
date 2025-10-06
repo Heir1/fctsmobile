@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -18,8 +19,7 @@ import { orphanageService } from '../services/orphanageService';
 import { OrphanageStats } from '../types/orphanage';
 import Sidebar from './Sidebar';
 import DashboardStats from './stats/DashboardStats';
-import { Ionicons } from '@expo/vector-icons';
-import LinearGradient from 'react-native-linear-gradient';
+import UnifiedHeader from './UnifiedHeader';
 
 export default function DashboardScreen() {
   const { user, logout } = useAuth();
@@ -126,16 +126,12 @@ export default function DashboardScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <View>
-              <Text style={styles.headerTitle}>Dashboard</Text>
-              <Text style={styles.headerSubtitle}>
-                Welcome back, {user?.email || 'User'}
-              </Text>
-            </View>
-          </View>
-        </View>
+        <UnifiedHeader
+          title="Dashboard"
+          subtitle="Welcome back, {user?.email || 'User'}"
+          showRefresh={false}
+          showMenu={false}
+        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0ea5e9" />
           <Text style={styles.loadingText}>Chargement des statistiques...</Text>
@@ -146,38 +142,15 @@ export default function DashboardScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header avec effet glassmorphism */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            onPress={openSidebar} 
-            style={styles.menuButton}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="menu" size={28} color="#3b82f6" />
-          </TouchableOpacity>
-          
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.headerTitle}>Dashboard</Text>
-            <Text style={styles.headerSubtitle}>Overview & Analytics</Text>
-          </View>
-  
-          <View style={styles.headerActions}>
-            <TouchableOpacity 
-              style={styles.refreshButton}
-              onPress={onRefresh}
-              activeOpacity={0.7}
-            >
-              <Ionicons 
-                name="refresh" 
-                size={22} 
-                color={refreshing ? '#3b82f6' : '#9ca3af'} 
-                style={refreshing && styles.refreshingIcon}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+      <UnifiedHeader
+        title="Dashboard"
+        subtitle="Overview & Analytics"
+        onMenuPress={openSidebar}
+        onRefreshPress={onRefresh}
+        refreshing={refreshing}
+        showRefresh={true}
+        showMenu={true}
+      />
   
       {/* Content */}
       <ScrollView 
@@ -278,62 +251,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0f172a',
-  },
-  header: {
-    backgroundColor: 'rgba(35, 37, 40, 0.95)',
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    paddingTop: 35,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  menuButton: {
-    padding: 12,
-    borderRadius: 16,
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.2)',
-  },
-  headerTextContainer: {
-    flex: 1,
-    marginLeft: 16,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#f8fafc',
-    letterSpacing: -0.5,
-    marginBottom: 2,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#94a3b8',
-    fontWeight: '500',
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  refreshButton: {
-    padding: 10,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  refreshingIcon: {
-    transform: [{ rotate: '360deg' }],
   },
   content: {
     flex: 1,
