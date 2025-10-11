@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import UnifiedHeader from '../components/UnifiedHeader';
 import { childrenService } from '../services/childrenService';
 import { ChildSummary, ChildrenListResponse } from '../types/child';
+import { StatusBar } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -152,6 +153,11 @@ export default function ChildrenScreen() {
   
   return (
     <SafeAreaView style={styles.container}>
+        <StatusBar 
+          barStyle="light-content" 
+          backgroundColor="#0f172a" 
+        />
+      
       <UnifiedHeader
         title="Children"
         subtitle="Registered children list"
